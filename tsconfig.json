@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+      "module": "es6",
+      "noImplicitAny": true,
+      "removeComments": true,
+      "outDir": "./dist",
+      "sourceMap": true,
+      "target": "es5",
+      "allowJs": true,
+      "checkJs": false,
+      "jsx": "react",
+  },
+  "include": [
+      "lib/**/*",
+      "test/**/*",
+  ],
+  "exclude": [
+      "node_modules",
+      "**/*.spec.ts"
+  ]
+}
