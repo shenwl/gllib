@@ -20,7 +20,7 @@ export default class RenderContext {
     return RenderContext.gl;
   }
 
-  static getProgram() {
+  static getProgram(): WebGLProgram {
     RenderContext.init();
     return RenderContext.program;
   }
