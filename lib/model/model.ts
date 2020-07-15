@@ -10,6 +10,7 @@ export class Model {
     this.mesh = mesh;
     this.gl = RenderContext.getGL();
     this.program = RenderContext.getProgram();
+    this.gl.useProgram(this.program);
   }
 
   setVectorUniform(name: string, value: Float32List) {
