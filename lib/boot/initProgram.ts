@@ -1,10 +1,8 @@
 import { loadShader } from './loadShader';
+import { vertexShaderSource, fragShaderSource } from '../shaders/index';
+
 
 export const initProgram = (gl: WebGLRenderingContext): WebGLProgram => {
-
-  const vertexShaderSource: string = (document.getElementById('vertex-shader') as HTMLScriptElement).text;
-  const fragShaderSource: string = (document.getElementById('fragment-shader') as HTMLScriptElement).text;
-
   const vertexShader: WebGLShader = loadShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   const fragShader: WebGLShader = loadShader(gl, gl.FRAGMENT_SHADER, fragShaderSource);
 
