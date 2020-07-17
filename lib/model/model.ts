@@ -28,6 +28,18 @@ export class Model {
     throw new Error('setVectorUniform error, value length must be 2/3/4, but get: ' + value.length);
   }
 
+  setMatrixUniform(name: string, value: Float32List) {
+    const position = this.gl.getUniformLocation(this.program, name)
+
+    if(value.length === 4) {
+      this.gl.uniformMatrix2fv(position, false, value)
+    } else if(value.length === 9) {
+      this.gl.uniformMatrix3fv(position, false, value)
+    } else if(value.length === 16) {
+      this.gl.uniformMatrix4fv(position, false, value)
+    }
+  }
+
   draw() {
     const gl = this.gl;
     // 加一些参数

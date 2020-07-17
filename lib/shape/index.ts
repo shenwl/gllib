@@ -1,5 +1,5 @@
-import { d2F } from './d2F';
+import { d3Cube } from './d3Cube';
 
 export {
-  d2F,
+  d3Cube,
 }

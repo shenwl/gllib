@@ -10,8 +10,10 @@ interface IProps {
 }
 
 export class Mesh {
-  indices: number[];
+  // 顶点坐标数组，描述有哪些顶点
   vertexes: number[];
+  // 索引数组：描述顶点怎么组成三角形（3个一组）
+  indices: number[];
   dimension: number;
   gl: WebGLRenderingContext;
   program: WebGLProgram;
@@ -44,8 +46,6 @@ export class Mesh {
 
   draw() {
     const { gl } = this;
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
 
     this.vertexBuffer.associate();
     this.colorsBuffer && this.colorsBuffer.associate();
