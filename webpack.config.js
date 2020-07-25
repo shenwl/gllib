@@ -9,13 +9,15 @@ demos.forEach(app => {
 })
 module.exports = {
   entry,
-  output : {
-    filename : '[name].js'
+  output: {
+    filename: '[name].js'
   },
-  devtool : "eval-source-map",
+  devtool: "eval-source-map",
+  resolve: {
+    extensions: ['.ts', '.js', '.json']
+  },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
         loader: "ts-loader",
@@ -28,19 +30,19 @@ module.exports = {
         }
       },
       {
-        test : /\.css$/,
-        use :  ["style-loader", "css-loader"]
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"]
       }
     ]
   },
-  devServer : {
-    contentBase : path.resolve(__dirname, "static"),
-    watchOptions : {
-      poll : true
+  devServer: {
+    contentBase: path.resolve(__dirname, "static"),
+    watchOptions: {
+      poll: true
     },
-    before : (app) => {
+    before: (app) => {
       app.get('/', (req, res) => {
-        let content = fs.readFileSync( path.resolve(__dirname, 'index.html') , 'utf-8')
+        let content = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8')
         const menuStr = demos.map(app => `<li><a class='menu-item' data-link='${app}'>${app}</a></li>`).join('\n')
         content = content.replace("__MENU__", menuStr)
 
@@ -48,14 +50,14 @@ module.exports = {
       })
 
       demos.forEach(dir => {
-        app.get('/' + dir, (req,res) => {
+        app.get('/' + dir, (req, res) => {
           let content = fs.readFileSync(path.resolve(__dirname, 'demo', dir, "index.html"), 'utf-8')
           content = content.replace("__APP__", dir)
 
           function replaceShader(pattern, base) {
             const reg = new RegExp(pattern)
             if (content.match(reg)) {
-              const regWithName = new RegExp(pattern +"\\((.*)\\)")
+              const regWithName = new RegExp(pattern + "\\((.*)\\)")
               const m = content.match(
                 regWithName
               )
@@ -91,14 +93,13 @@ module.exports = {
             return false
           }
 
-          while(replaceShader('__VERTEX_SHADER__', 'vertex'));
-          while(replaceShader('__FRAGMENT_SHADER__', 'frag'));
+          while (replaceShader('__VERTEX_SHADER__', 'vertex'));
+          while (replaceShader('__FRAGMENT_SHADER__', 'frag'));
           res.send(content)
         })
       })
     },
-    compress : true,
-    port : 3000
+    compress: true,
+    port: 3000
   }
 }
-
