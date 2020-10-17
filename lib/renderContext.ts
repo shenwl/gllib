@@ -8,8 +8,12 @@ export default class RenderContext {
   static init() {
     if (RenderContext.gl) return;
 
-    const gl = initGl();
-    const program = initProgram(gl);
+    const gl = initGl(document.getElementById('canvas') as HTMLCanvasElement);
+    const program = initProgram(
+      gl,
+      document.getElementById('vertex-shader').innerText,
+      document.getElementById('frag-shader').innerText,
+    );
 
     RenderContext.gl = gl;
     RenderContext.program = program;

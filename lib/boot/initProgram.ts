@@ -1,9 +1,7 @@
 import { loadShader } from './loadShader';
 
 
-export const initProgram = (gl: WebGLRenderingContext): WebGLProgram => {
-  const vertexShaderSource = document.getElementById('vertex-shader').innerText;
-  const fragShaderSource = document.getElementById('frag-shader').innerText;
+export const initProgram = (gl: WebGLRenderingContext, vertexShaderSource: string, fragShaderSource: string): WebGLProgram => {
   const vertexShader: WebGLShader = loadShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   const fragShader: WebGLShader = loadShader(gl, gl.FRAGMENT_SHADER, fragShaderSource);
 

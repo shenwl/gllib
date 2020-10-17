@@ -1,6 +1,4 @@
-export function initGl(): WebGLRenderingContext {
-  const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
-
+export function initGl(canvas: HTMLCanvasElement): WebGLRenderingContext {
   const gl: WebGLRenderingContext = canvas.getContext('webgl');
 
   if (!gl) {
