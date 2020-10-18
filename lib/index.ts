@@ -1,14 +1,16 @@
+import RenderContext from './renderContext';
 import { Mesh, Model } from './model/index';
-import renderContext from './renderContext';
-import * as shapes from './shape/index';
-import * as matrix from './matrix/index';
-import * as utils from './utils';
+import * as Shapes from './shape/index';
+import { Matrix4, Vector3, Vector4 } from './matrix/matrix';
+import * as Utils from './utils';
 
 export {
   Model,
   Mesh,
-  shapes,
-  matrix,
-  renderContext,
-  utils,
+  RenderContext,
+  Shapes,
+  Utils,
+  Matrix4, 
+  Vector3, 
+  Vector4 
 }

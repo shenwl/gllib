@@ -2,7 +2,7 @@ interface ISrc {
     elements?: Float32Array
 }
 
-declare class Vector3 {
+export declare class Vector3 {
     elements: Float32Array; // length: 3
 
     constructor(options?: ISrc);
@@ -10,13 +10,13 @@ declare class Vector3 {
     normalize(): Vector3;
 }
 
-declare class Vector4 {
+export declare class Vector4 {
     elements: Float32Array; // length: 4
 
     constructor(options?: ISrc);
 }
 
-declare class Matrix4 {
+export declare class Matrix4 {
     elements: Float32Array; // length: 16 (4 * 4)
 
     constructor(options?: ISrc);
