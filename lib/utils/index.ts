@@ -3,7 +3,7 @@ export interface IExtendWebGLBuffer extends WebGLBuffer {
   type: GLenum;
 }
 
-interface IExtendWebGLRenderingContext extends WebGLRenderingContext {
+export interface IProgramWebGLRenderingContext extends WebGLRenderingContext {
   program: WebGLProgram;
 }
 
@@ -33,7 +33,16 @@ export function initArrayBufferForLaterUse(gl: WebGLRenderingContext, data: GLsi
   return buffer;
 }
 
-export function initArrayBuffer(program: WebGLProgram, gl: WebGLRenderingContext, attribute: string, data: GLsizeiptr, num: number, type: GLenum): void {
+export function initArrayBuffer(
+  program: WebGLProgram,
+  gl: WebGLRenderingContext,
+  attribute: string,
+  data: BufferSource,
+  num: number,
+  type: GLenum = WebGLRenderingContext.FLOAT,
+  stride: GLsizei = 0,
+  offset: GLintptr = 0
+): void {
   const buffer = gl.createBuffer() as IExtendWebGLBuffer;
 
   if (!buffer) {
@@ -48,7 +57,7 @@ export function initArrayBuffer(program: WebGLProgram, gl: WebGLRenderingContext
     throw Error("Fail to getAttribLocation of: " + attribute);
   }
 
-  gl.vertexAttribPointer(a_attribute, num, type, false, 0, 0);
+  gl.vertexAttribPointer(a_attribute, num, type, false, stride, offset);
   gl.enableVertexAttribArray(a_attribute);
 }
 
@@ -73,7 +82,7 @@ export function createProgram(gl: WebGLRenderingContext, vertexShader: string, f
 
 
   if (!vShader || !fShader) {
-    throw Error('fail to vertexShader or fragShader: ' + vertexShader + ', ' + fragShader);
+    throw Error('vertexShader or fragShader is empty: ' + vertexShader + ', ' + fragShader);
   }
 
   const program = gl.createProgram();
@@ -88,7 +97,7 @@ export function createProgram(gl: WebGLRenderingContext, vertexShader: string, f
 
   gl.linkProgram(program);
 
-  if (!gl.getProgramParameter('program', gl.LINK_STATUS)) {
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     const err = gl.getProgramInfoLog(program);
     gl.deleteProgram(program);
     gl.deleteShader(vShader);
@@ -103,7 +112,7 @@ export function initShader(gl: WebGLRenderingContext, vertexShader: string, frag
   const program = createProgram(gl, vertexShader, fragShader);
   gl.useProgram(program);
 
-  (gl as IExtendWebGLRenderingContext).program = program;
+  (gl as IProgramWebGLRenderingContext).program = program;
 
   return program;
 }

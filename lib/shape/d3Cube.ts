@@ -1,7 +1,9 @@
-import { Mesh } from '../model/mesh';
+export interface ID3Cube {
+  vertexes: number[];
+  indices: number[];
+}
 
-
-export const d3Cube = (gl: WebGLRenderingContext, program: WebGLProgram) => {
+const createD3Cube = (): ID3Cube => {
   const vertexes = [
     -1, -1, -1, 1, -1, -1, -1, 1, 1, -1, 1, -1,
     -1, -1, 1, 1, -1, 1, 1, 1, 1, -1, 1, 1,
@@ -20,5 +22,10 @@ export const d3Cube = (gl: WebGLRenderingContext, program: WebGLProgram) => {
     20, 21, 22, 20, 22, 23,
   ];
 
-  return new Mesh({ vertexes, indices, gl, program });
+  return {
+    vertexes: vertexes,
+    indices: indices,
+  };
 }
+
+export const d3Cube = createD3Cube();
