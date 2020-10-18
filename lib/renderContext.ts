@@ -4,18 +4,22 @@ export default class RenderContext {
   static gl: WebGLRenderingContext = null;
   static program: WebGLProgram = null;
 
-  static init(canvasSelector: string = '#canvas') {
+  static init(
+    canvasSelector: string = '#canvas',
+    vShader?: string,
+    fShader?: string,
+  ) {
     if (RenderContext.gl) return;
 
     const gl = initGl(document.querySelector(canvasSelector) as HTMLCanvasElement);
-    const program = createProgram(
-      gl,
-      document.getElementById('vertex-shader').innerText,
-      document.getElementById('frag-shader').innerText,
-    );
-
     RenderContext.gl = gl;
-    RenderContext.program = program;
+
+
+    if (vShader && fShader) {
+      const program = createProgram(gl, vShader, fShader);
+
+      RenderContext.program = program;
+    }
   }
 
   static getGL(): WebGLRenderingContext {

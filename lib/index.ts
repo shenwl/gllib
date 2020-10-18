@@ -5,9 +5,9 @@ import { Matrix4, Vector3, Vector4 } from './matrix/matrix';
 import * as Utils from './utils';
 
 export {
+  RenderContext,
   Model,
   Mesh,
-  RenderContext,
   Shapes,
   Utils,
   Matrix4, 

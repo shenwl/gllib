@@ -1,10 +1,6 @@
-import RenderContext from '../renderContext';
-
-const gl: WebGLRenderingContext = RenderContext.getGL();
-
 enum Mode {
-  STATIC_DRAW = gl.STATIC_DRAW,
-  DYNAMIC_DRAW = gl.DYNAMIC_DRAW,
+  STATIC_DRAW = WebGLRenderingContext.STATIC_DRAW,
+  DYNAMIC_DRAW = WebGLRenderingContext.DYNAMIC_DRAW,
 }
 
 export class GLIndexBuffer {
@@ -14,10 +10,16 @@ export class GLIndexBuffer {
   program: WebGLProgram;
   buffer: WebGLBuffer;
 
-  constructor( data: BufferSource, dimension: number = 3, mode: Mode = Mode.STATIC_DRAW) {
+  constructor(
+    gl: WebGLRenderingContext,
+    program: WebGLProgram,
+    data: BufferSource,
+    dimension: number = 3,
+    mode: Mode = Mode.STATIC_DRAW
+  ) {
     this.dimension = dimension;
     this.gl = gl;
-    this.program = RenderContext.getProgram();
+    this.program = program;
 
     /* 初始化Buffer */
     this.buffer = this.gl.createBuffer();

@@ -1,15 +1,14 @@
 import { Mesh } from './mesh';
-import RenderContext from '../renderContext';
 
 export class Model {
   mesh: Mesh;
   gl: WebGLRenderingContext;
   program: WebGLProgram;
 
-  constructor(mesh: Mesh) {
+  constructor(gl: WebGLRenderingContext, program: WebGLProgram, mesh: Mesh) {
     this.mesh = mesh;
-    this.gl = RenderContext.getGL();
-    this.program = RenderContext.getProgram();
+    this.gl = gl;
+    this.program = program;
     this.gl.useProgram(this.program);
   }
 
@@ -31,11 +30,11 @@ export class Model {
   setMatrixUniform(name: string, value: Float32List) {
     const position = this.gl.getUniformLocation(this.program, name)
 
-    if(value.length === 4) {
+    if (value.length === 4) {
       this.gl.uniformMatrix2fv(position, false, value)
-    } else if(value.length === 9) {
+    } else if (value.length === 9) {
       this.gl.uniformMatrix3fv(position, false, value)
-    } else if(value.length === 16) {
+    } else if (value.length === 16) {
       this.gl.uniformMatrix4fv(position, false, value)
     }
   }

@@ -1,10 +1,6 @@
-import RenderContext from '../renderContext';
-
-const gl: WebGLRenderingContext = RenderContext.getGL();
-
 enum Mode {
-  STATIC_DRAW = gl.STATIC_DRAW,
-  DYNAMIC_DRAW = gl.DYNAMIC_DRAW,
+  STATIC_DRAW = WebGLRenderingContext.STATIC_DRAW,
+  DYNAMIC_DRAW = WebGLRenderingContext.DYNAMIC_DRAW,
 }
 
 export class GLVertexBuffer {
@@ -15,10 +11,17 @@ export class GLVertexBuffer {
   location: GLint;
   buffer: WebGLBuffer;
 
-  constructor(name: string, data: BufferSource, dimension: number = 3, mode: Mode = Mode.STATIC_DRAW) {
+  constructor(
+    gl: WebGLRenderingContext,
+    program: WebGLProgram,
+    name: string,
+    data: BufferSource,
+    dimension: number = 3,
+    mode: Mode = Mode.STATIC_DRAW
+  ) {
     this.dimension = dimension;
     this.gl = gl;
-    this.program = RenderContext.getProgram();
+    this.program = program;
     this.location = this.gl.getAttribLocation(this.program, name);
 
     /* 初始化Buffer */
@@ -48,5 +51,4 @@ export class GLVertexBuffer {
       offset,
     );
   }
-
 }

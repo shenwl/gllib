@@ -1,29 +1,32 @@
-import { Model, shapes, renderContext, matrix } from '../../lib/index';
+import { RenderContext, Shapes, Mesh } from '../../lib/index';
 
-const gl = renderContext.getGL();
+const vShader = `
+  attribute vec4 a_Position;
+  attribute vec4 a_Color;
+  uniform mat4 u_ViewMatrix;
+  varying vec4 v_Color;
 
-void (
-  function () {
-    const mesh = shapes.d3Cube();
-    const model = new Model(mesh);
-    gl.viewport(0, 0, 500, 500);
-
-    const mPerspect = matrix.perspective(
-      Math.PI * 0.6, gl.canvas.width / gl.canvas.height, 0, 100
-    );
-
-    let angle = 0.0;
-
-    model.setMatrixUniform('u_project', mPerspect);
-
-    function draw() {
-      const rotateYMatrix = matrix.rotateY(angle);
-      model.setMatrixUniform('u_rotatey', rotateYMatrix);
-      model.draw();
-      angle += 0.01;
-      requestAnimationFrame(draw);
-    }
-
-    draw();
+  void main() {
+    gl_Position
   }
-)()
+`
+
+const fShader = `
+  precision mediump float;
+  uniform vec4 u_Color;
+
+  void main() {
+    gl_FragColor = vec4(0.0, 1.0, 0,0);
+  }
+`
+
+function __main__() {
+  RenderContext.init('#canvas', vShader, fShader);
+
+  const Cube: Mesh = Shapes.d3Cube(RenderContext.gl, RenderContext.program);
+  const gl = RenderContext.getGL();
+
+  Cube.draw();
+}
+
+__main__();
