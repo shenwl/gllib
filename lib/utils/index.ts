@@ -98,24 +98,28 @@ export function initShader(gl: WebGLRenderingContext, vertexShader: string, frag
   return program;
 }
 
-function createLoadTexture() {
-  let g_texUnit0 = false;
-  let g_texUnit1 = false;
+/**
+ * 用于创建加载纹理的工具函数
+ * @param {number} texCount 纹理材质总数
+ * @returns {function} loadTexture
+ */
+export function createTextureLoader(texCount: number = 1) {
+  const texUnitActive: { [key: string]: boolean } = {};
 
-  return function (
+  for (let i = 0; i < texCount; i++) {
+    texUnitActive[`TEXTURE${i}`] = false;
+  }
+
+  return function loadTexture(
     gl: WebGLRenderingContext,
     n: number,
     texture: WebGLTexture,
     u_Sample: WebGLUniformLocation,
     image: HTMLImageElement,
     texUnit: GLint = 0,
-  ) {
+  ): void {
     const texUnitKey = `TEXTURE${texUnit}`;
-    if (texUnit === 0) {
-      g_texUnit0 = true;
-    } else if (texUnit === 1) {
-      g_texUnit1 = true;
-    }
+    texUnitActive[texUnitKey] = true;
 
     // reverse image y
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -129,17 +133,17 @@ function createLoadTexture() {
     // set image to texture
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
+    // 将texUnit号纹理传递给着色器的取样器变量
+    gl.uniform1i(u_Sample, texUnit);
+
     // clear canvas
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    if (g_texUnit0 && g_texUnit1) {
+    if (Object.values(texUnitActive).every(Boolean)) {
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
     }
   }
 }
-
-export const loadTexture = createLoadTexture();
-
 
 
 
