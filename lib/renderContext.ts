@@ -1,15 +1,14 @@
-import { initGl } from './boot/initGl';
-import { initProgram } from './boot/initProgram';
+import { createProgram, initGl } from './utils';
 
 export default class RenderContext {
   static gl: WebGLRenderingContext = null;
   static program: WebGLProgram = null;
 
-  static init() {
+  static init(canvasSelector: string = '#canvas') {
     if (RenderContext.gl) return;
 
-    const gl = initGl(document.getElementById('canvas') as HTMLCanvasElement);
-    const program = initProgram(
+    const gl = initGl(document.querySelector(canvasSelector) as HTMLCanvasElement);
+    const program = createProgram(
       gl,
       document.getElementById('vertex-shader').innerText,
       document.getElementById('frag-shader').innerText,

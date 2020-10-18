@@ -7,6 +7,16 @@ interface IExtendWebGLRenderingContext extends WebGLRenderingContext {
   program: WebGLProgram;
 }
 
+export function initGl(canvas: HTMLCanvasElement): WebGLRenderingContext {
+  const gl: WebGLRenderingContext = canvas.getContext('webgl');
+
+  if (!gl) {
+    throw Error('gl init fail');
+  }
+  return gl;
+}
+
+
 export function initArrayBufferForLaterUse(gl: WebGLRenderingContext, data: GLsizeiptr, num: number, type: GLenum): IExtendWebGLBuffer {
   const buffer = gl.createBuffer() as IExtendWebGLBuffer;
 
@@ -121,16 +131,16 @@ export function createTextureLoader(texCount: number = 1) {
     const texUnitKey = `TEXTURE${texUnit}`;
     texUnitActive[texUnitKey] = true;
 
-    // reverse image y
+    // 图像y轴反转
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-    // active texture unit
+
     gl.activeTexture((gl as any)[texUnitKey]);
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    // set texture params
+    // 配置纹理参数
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-    // set image to texture
+    // 配置纹理图像
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
     // 将texUnit号纹理传递给着色器的取样器变量
