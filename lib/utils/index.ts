@@ -136,6 +136,7 @@ export function createTextureLoader(texCount: number = 1) {
     u_Sample: WebGLUniformLocation,
     image: HTMLImageElement,
     texUnit: GLint = 0,
+    level: GLint = 0,
   ): void {
     const texUnitKey = `TEXTURE${texUnit}`;
     texUnitActive[texUnitKey] = true;
@@ -144,13 +145,14 @@ export function createTextureLoader(texCount: number = 1) {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
     gl.activeTexture((gl as any)[texUnitKey]);
+
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
     // 配置纹理参数
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
     // 配置纹理图像
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    gl.texImage2D(gl.TEXTURE_2D, level, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
     // 将texUnit号纹理传递给着色器的取样器变量
     gl.uniform1i(u_Sample, texUnit);
@@ -162,6 +164,11 @@ export function createTextureLoader(texCount: number = 1) {
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
     }
   }
+}
+
+export function createTexture(gl: WebGLRenderingContext, program: WebGLProgram, src: string) {
+  const texture = gl.createTexture();
+  
 }
 
 
