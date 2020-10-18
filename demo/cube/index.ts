@@ -2,18 +2,22 @@ import { Shapes, Utils, Matrix4 } from '../../lib/index';
 
 const vShader = `
   attribute vec4 a_Position;
+  attribute vec4 a_Color;
   uniform mat4 u_MvpMatrix;
+  varying vec4 v_Color;
 
   void main() {
     gl_Position = u_MvpMatrix * a_Position;
+    v_Color = a_Color;
   }
 `
 
 const fShader = `
   precision mediump float;
+  varying vec4 v_Color;
 
   void main() {
-    gl_FragColor = vec4(1.0, 1.0, 0,0);
+    gl_FragColor = v_Color;
   }
 `
 
@@ -26,16 +30,17 @@ function initVertexBuffers(
   const indexBuffer = gl.createBuffer();
   if (!indexBuffer) throw Error('failed to create buffer');
 
-  // const colors = new Float32Array([
-  //   0.4, 0.4, 1, 0.4, 0.4, 1, 0.4, 0.4, 0.4, 0.4, 1,
-  //   0.4, 1, 0.4, 0.4, 1, 0.4, 0.4, 1, 0.4, 0.4, 1, 0.4,
-  //   1, 0.4, 0.4, 1, 0.4, 0.4, 1, 0.4, 0.4, 1, 0.4, 0.4,
-  //   1, 1, 0.4, 1, 1, 0.4, 1, 1, 0.4, 1, 1, 0.4,
-  //   0.4, 1, 1, 0.4, 1, 1, 0.4, 1, 1, 0.4, 1, 1,
-  //   1, 0.4, 1, 1, 0.4, 1, 1, 0.4, 1, 1, 0.4, 1,
-  // ]);
+  const colors = new Float32Array([
+    0.4, 0.4, 1, 0.4, 0.4, 1, 0.4, 0.4, 1, 0.4, 0.4, 1,
+    0.4, 1, 0.4, 0.4, 1, 0.4, 0.4, 1, 0.4, 0.4, 1, 0.4,
+    1, 0.4, 0.4, 1, 0.4, 0.4, 1, 0.4, 0.4, 1, 0.4, 0.4,
+    1, 1, 0.4, 1, 1, 0.4, 1, 1, 0.4, 1, 1, 0.4,
+    0.4, 1, 1, 0.4, 1, 1, 0.4, 1, 1, 0.4, 1, 1,
+    1, 0.4, 1, 1, 0.4, 1, 1, 0.4, 1, 1, 0.4, 1,
+  ]);
 
   Utils.initArrayBuffer(program, gl, 'a_Position', new Float32Array(vertexes), 3);
+  Utils.initArrayBuffer(program, gl, 'a_Color', new Float32Array(colors), 3);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
