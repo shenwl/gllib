@@ -1,5 +1,5 @@
 import { Shapes, Utils, Matrix4 } from '../../lib/index';
-import texImage from './images/tex.jpg';
+import texImage from './images/tex256.jpg';
 
 const loadTexture = Utils.createTextureLoader();
 
@@ -39,17 +39,17 @@ function initBuffers(
   const indexBuffer = gl.createBuffer();
   if (!indexBuffer) throw Error('failed to create buffer');
 
-  const textCoord = new Float32Array([
-    0, 0, 0, 1, 1, 1, 1, 0,
-    0, 0, 1, 0, 1, 1, 0, 1,
-    0, 0, 0, 1, 1, 1, 1, 0,
-    0, 0, 0, 1, 1, 1, 1, 0,
-    0, 0, 0, 1, 1, 1, 1, 0,
-    0, 0, 0, 1, 1, 1, 1, 0,
-  ])
+  const textCoord: number[] = [];
+  vertexes.forEach((v, i) => {
+    if ((i !== 0) && (i % 3 === 0)) {
+      return;
+    }
+    textCoord.push(v + 1);
+  })
+
 
   Utils.initArrayBuffer(program, gl, 'a_Position', new Float32Array(vertexes), 3);
-  Utils.initArrayBuffer(program, gl, 'a_Texcoord', textCoord, 2);
+  Utils.initArrayBuffer(program, gl, 'a_Texcoord', new Float32Array(textCoord), 2);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
@@ -78,7 +78,7 @@ function __main__() {
   const { vertexes, indices } = Cube;
 
   initBuffers(gl, program, vertexes, indices);
-  initTexture(gl, program, indices.length);
+  initTexture(gl, program, indices.length * (2 / 3));
 
   gl.clearColor(0, 0, 0, 1)
   gl.enable(gl.DEPTH_TEST);
