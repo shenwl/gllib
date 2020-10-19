@@ -32,13 +32,13 @@ function initBuffers(
   program: WebGLProgram,
   vertexes: number[],
   indices: number[],
-  textCoords: number[],
+  texCoords: number[],
 ) {
   const indexBuffer = gl.createBuffer();
   if (!indexBuffer) throw Error('failed to create buffer');
 
   Utils.initArrayBuffer(program, gl, 'a_Position', new Float32Array(vertexes), 3);
-  Utils.initArrayBuffer(program, gl, 'a_Texcoord', new Float32Array(textCoords), 2);
+  Utils.initArrayBuffer(program, gl, 'a_Texcoord', new Float32Array(texCoords), 2);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
@@ -67,9 +67,9 @@ function __main__() {
   const program = Utils.initShader(gl, vShader, fShader);
 
   const Cube = Shapes.d3Cube;
-  const { vertexes, indices, textCoords } = Cube;
+  const { vertexes, indices, texCoords } = Cube;
 
-  initBuffers(gl, program, vertexes, indices, textCoords);
+  initBuffers(gl, program, vertexes, indices, texCoords);
   initTexture(gl, program, indices.length);
 
   gl.clearColor(0, 0, 0, 1)

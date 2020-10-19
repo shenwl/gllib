@@ -74,7 +74,7 @@ function __main__() {
   const program = Utils.initShader(gl, vShader, fShader);
 
   const Sphere = Shapes.d3Sphere;
-  const { vertexes, indices, textCoords, randomColors } = Sphere;
+  const { vertexes, indices, texCoords, randomColors } = Sphere;
 
   initBuffers(gl, program, vertexes, indices, randomColors);
   initTexture(gl, program, indices.length);

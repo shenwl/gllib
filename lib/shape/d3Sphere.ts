@@ -1,7 +1,7 @@
 export interface ID3Sphere {
   vertexes: number[];
   indices: number[];
-  textCoords: number[];
+  texCoords: number[];
   randomColors: number[];
 }
 
@@ -15,7 +15,7 @@ export const createD3Sphere = (r: number = 1, n: number = 20, m: number = 10): I
   // [0, 2pi]
   const vertexes: number[] = [];
   const indices: number[] = [];
-  const textCoords: number[] = [];
+  const texCoords: number[] = [];
   const randomColors: number[] = [];
 
   for (let y = 0; y <= m; y++) {
@@ -32,7 +32,7 @@ export const createD3Sphere = (r: number = 1, n: number = 20, m: number = 10): I
       const py = Math.cos(phi) * r;
       const pz = Math.sin(phi) * Math.sin(theta) * r;
 
-      textCoords.push(u, 1 - v);
+      texCoords.push(1 - u, v);
       vertexes.push(px, py, pz);
 
       randomColors.push(Math.random(), Math.random(), Math.random(), 1);
@@ -65,7 +65,7 @@ export const createD3Sphere = (r: number = 1, n: number = 20, m: number = 10): I
   return {
     vertexes,
     indices,
-    textCoords,
+    texCoords,
     randomColors,
   };
 }
