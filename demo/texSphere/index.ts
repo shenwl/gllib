@@ -57,7 +57,7 @@ function initTexture(
     const texture = gl.createTexture();
     loadTexture(gl, n, texture, u_Texture, img, () => {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
+      gl.drawElements(gl.TRIANGLE_STRIP, n, gl.UNSIGNED_BYTE, 0);
     });
   }
 }
@@ -67,21 +67,22 @@ function __main__() {
   const gl = Utils.initGl(canvas);
   const program = Utils.initShader(gl, vShader, fShader);
 
+  const mvpMatrix = new Matrix4();
+  mvpMatrix.setPerspective(30, 1, 1, 100);
+  mvpMatrix.lookAt(3, 3, 7, 0, 0, 0, 0, 1, 0);
+
   const Sphere = Shapes.d3Sphere;
   const { vertexes, indices, texCoords } = Sphere;
 
   initBuffers(gl, program, vertexes, indices, texCoords);
   initTexture(gl, program, indices.length);
 
-  // let angle = 0;
+  let angle = 0;
 
   const draw = () => {
-    // angle += 0.01;
+    angle += 0.001;
 
-    const mvpMatrix = new Matrix4();
-    mvpMatrix.setPerspective(30, 1, 1, 100);
-    mvpMatrix.lookAt(3, 3, 7, 0, 0, 0, 0, 1, 0);
-    // mvpMatrix.rotate(angle, 0, 1, 0);
+    mvpMatrix.rotate(angle, 0, 1, 0);
 
     gl.clearColor(0, 0, 0, 1)
     gl.enable(gl.DEPTH_TEST);
@@ -89,9 +90,9 @@ function __main__() {
     const u_MvpMatrix = gl.getUniformLocation(program, 'u_MvpMatrix');
     gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_BYTE, 0);
+    gl.drawElements(gl.TRIANGLE_STRIP, indices.length, gl.UNSIGNED_BYTE, 0);
 
-    // requestAnimationFrame(draw);
+    requestAnimationFrame(draw)
   };
 
   draw();
