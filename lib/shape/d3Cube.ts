@@ -1,7 +1,7 @@
 export interface ID3Cube {
   vertexes: number[];
   indices: number[];
-  textCoord: number[];
+  textCoords: number[];
 }
 
 const createD3Cube = (): ID3Cube => {
@@ -23,7 +23,7 @@ const createD3Cube = (): ID3Cube => {
     20, 21, 22, 20, 22, 23
   ];
 
-  const textCoord = [
+  const textCoords = [
     1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
     0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0,
     1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
@@ -35,7 +35,7 @@ const createD3Cube = (): ID3Cube => {
   return {
     vertexes,
     indices,
-    textCoord,
+    textCoords,
   };
 }
 
