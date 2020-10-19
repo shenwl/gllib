@@ -16,6 +16,9 @@ export function initGl(canvas: HTMLCanvasElement): WebGLRenderingContext {
   return gl;
 }
 
+export function powerOf2(num: number): boolean {
+  return (num & (num - 1)) == 0
+}
 
 export function initArrayBufferForLaterUse(gl: WebGLRenderingContext, data: GLsizeiptr, num: number, type: GLenum): IExtendWebGLBuffer {
   const buffer = gl.createBuffer() as IExtendWebGLBuffer;
@@ -135,6 +138,7 @@ export function createTextureLoader(texCount: number = 1) {
     texture: WebGLTexture,
     u_Sample: WebGLUniformLocation,
     image: HTMLImageElement,
+    afterAllLoad: () => void,
     texUnit: GLint = 0,
     level: GLint = 0,
   ): void {
@@ -148,27 +152,34 @@ export function createTextureLoader(texCount: number = 1) {
 
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    // 配置纹理参数
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-
     // 配置纹理图像
     gl.texImage2D(gl.TEXTURE_2D, level, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+    if (powerOf2(image.width) && powerOf2(image.height)) {
+      // mipmap 图片被预处理成多个相差2的指数倍数的图片
+      // 需要宽高都是2的指数次方才可以生成
+      gl.generateMipmap(gl.TEXTURE_2D);
+    } else {
+      // 配置纹理参数
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // 纹理水平填充
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); // 纹理垂直填充
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);    // 纹理缩小方式
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);    // 纹理放大方式
+    }
 
     // 将texUnit号纹理传递给着色器的取样器变量
     gl.uniform1i(u_Sample, texUnit);
 
-    // clear canvas
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
+    // 所有纹理都load了，可以进行绘制
     if (Object.values(texUnitActive).every(Boolean)) {
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+      afterAllLoad();
     }
   }
 }
 
 export function createTexture(gl: WebGLRenderingContext, program: WebGLProgram, src: string) {
   const texture = gl.createTexture();
-  
+
 }
 
 

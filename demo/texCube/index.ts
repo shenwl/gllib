@@ -35,18 +35,10 @@ function initBuffers(
   program: WebGLProgram,
   vertexes: number[],
   indices: number[],
+  textCoord: number[],
 ) {
   const indexBuffer = gl.createBuffer();
   if (!indexBuffer) throw Error('failed to create buffer');
-
-  const textCoord: number[] = [];
-  vertexes.forEach((v, i) => {
-    if ((i !== 0) && (i % 3 === 0)) {
-      return;
-    }
-    textCoord.push(v + 1);
-  })
-
 
   Utils.initArrayBuffer(program, gl, 'a_Position', new Float32Array(vertexes), 3);
   Utils.initArrayBuffer(program, gl, 'a_Texcoord', new Float32Array(textCoord), 2);
@@ -66,7 +58,10 @@ function initTexture(
 
   img.onload = function () {
     const texture = gl.createTexture();
-    loadTexture(gl, n, texture, u_Texture, img);
+    loadTexture(gl, n, texture, u_Texture, img, () => {
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
+    });
   }
 }
 
@@ -75,10 +70,10 @@ function __main__() {
   const program = Utils.initShader(gl, vShader, fShader);
 
   const Cube = Shapes.d3Cube;
-  const { vertexes, indices } = Cube;
+  const { vertexes, indices, textCoord } = Cube;
 
-  initBuffers(gl, program, vertexes, indices);
-  initTexture(gl, program, indices.length * (2 / 3));
+  initBuffers(gl, program, vertexes, indices, textCoord);
+  initTexture(gl, program, indices.length);
 
   gl.clearColor(0, 0, 0, 1)
   gl.enable(gl.DEPTH_TEST);
