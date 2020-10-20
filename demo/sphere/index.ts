@@ -82,15 +82,15 @@ function __main__() {
   gl.clearColor(0, 0, 0, 1)
   gl.enable(gl.DEPTH_TEST);
 
-  const mvpMatrix = new Matrix4();
-  mvpMatrix.setPerspective(30, 1, 1, 100);
-  mvpMatrix.lookAt(3, 3, 7, 0, 0, 0, 0, 1, 0);
 
   let angle = 0;
 
   const draw = () => {
-    angle += 0.01;
+    angle += 1;
 
+    const mvpMatrix = new Matrix4();
+    mvpMatrix.setPerspective(30, 1, 1, 100);
+    mvpMatrix.lookAt(3, 3, 7, 0, 0, 0, 0, 1, 0);
     mvpMatrix.rotate(angle, 0, 1, 0);
     const u_MvpMatrix = gl.getUniformLocation(program, 'u_MvpMatrix');
     gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);

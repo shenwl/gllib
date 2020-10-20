@@ -1,5 +1,6 @@
 import { Shapes, Utils, Matrix4 } from '../../lib/index';
 import texImage from './images/map.jpg';
+// import texImage from './images/face.jpg';
 
 const loadTexture = Utils.createTextureLoader();
 
@@ -67,10 +68,6 @@ function __main__() {
   const gl = Utils.initGl(canvas);
   const program = Utils.initShader(gl, vShader, fShader);
 
-  const mvpMatrix = new Matrix4();
-  mvpMatrix.setPerspective(30, 1, 1, 100);
-  mvpMatrix.lookAt(3, 3, 7, 0, 0, 0, 0, 1, 0);
-
   const Sphere = Shapes.d3Sphere;
   const { vertexes, indices, texCoords } = Sphere;
 
@@ -80,9 +77,12 @@ function __main__() {
   let angle = 0;
 
   const draw = () => {
-    angle += 0.001;
+    angle += 1;
+    if (angle > 360) angle = 0;
 
-    mvpMatrix.rotate(angle, 0, 1, 0);
+
+    const mvpMatrix = new Matrix4();
+    mvpMatrix.setPerspective(30, 1, 1, 100).lookAt(3, 3, 7, 0, 0, 0, 0, 1, 0).rotate(angle, 0, 1, 0);
 
     gl.clearColor(0, 0, 0, 1)
     gl.enable(gl.DEPTH_TEST);
@@ -92,7 +92,7 @@ function __main__() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.drawElements(gl.TRIANGLE_STRIP, indices.length, gl.UNSIGNED_BYTE, 0);
 
-    requestAnimationFrame(draw)
+    requestAnimationFrame(draw);
   };
 
   draw();

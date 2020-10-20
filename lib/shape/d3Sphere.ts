@@ -32,7 +32,7 @@ export const createD3Sphere = (r: number = 1, n: number = 20, m: number = 10): I
       const py = Math.cos(phi) * r;
       const pz = Math.sin(phi) * Math.sin(theta) * r;
 
-      texCoords.push(1 - u, 1 - v);
+      texCoords.push(1 - u, 1-v);
       vertexes.push(px, py, pz);
 
       randomColors.push(Math.random(), Math.random(), Math.random(), 1);
