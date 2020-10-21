@@ -23,6 +23,9 @@ export class Model {
     this.children = [];
     this.textures = [];
 
+    this.unitMatrix = new Matrix4();
+    this.worldMatrix = new Matrix4();
+
     this.gl.useProgram(this.program);
   }
 
@@ -82,7 +85,7 @@ export class Model {
    */
   updateMatrix = (parentWorldMatrix?: Matrix4, parentUnitMatrix?: Matrix4) => {
     if (parentWorldMatrix && parentUnitMatrix) {
-      this.worldMatrix = new Matrix4().multiply(parentWorldMatrix).multiply(parentUnitMatrix);
+      this.worldMatrix = new Matrix4().multiply(parentUnitMatrix).multiply(parentWorldMatrix);
     }
     for (let child of this.children) {
       child.updateMatrix(this.worldMatrix, this.unitMatrix);
@@ -90,10 +93,8 @@ export class Model {
   }
 
   draw = (mode: GLenum = WebGLRenderingContext.TRIANGLES) => {
-    const gl = this.gl;
-
-    this.unitMatrix && this.setMatrixUniform('u_Unit', this.unitMatrix.elements);
-    this.worldMatrix && this.setMatrixUniform('u_World', this.worldMatrix.elements);
+    this.setMatrixUniform('u_World', this.worldMatrix.elements);
+    this.setMatrixUniform('u_Unit', this.unitMatrix.elements);
 
     if (this.mesh) {
       this.textures.forEach(tex => tex.associate());
