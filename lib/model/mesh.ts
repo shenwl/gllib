@@ -73,8 +73,13 @@ export class Mesh {
 
     this.customVerticesBuffer.forEach(buffer => {
       buffer.associate()
-    });
+    });  
 
+    gl.enable(gl.DEPTH_TEST);
+    // gl.depthFunc(gl.LEQUAL);
+    gl.clearColor(0, 0, 0, 1)
+    // gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     if (this.indicesBuffer) {
       gl.drawElements(
         mode,
