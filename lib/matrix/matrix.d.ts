@@ -35,6 +35,13 @@ export declare class Matrix4 {
     ortho(left: number, right: number, bottom: number, top: number, near: number, far: number): Matrix4;
     setFrustum(left: number, right: number, bottom: number, top: number, near: number, far: number): Matrix4;
     frustum(left: number, right: number, bottom: number, top: number, near: number, far: number): Matrix4;
+    /**
+     * 
+     * @param fovy 大致理解为眼睛睁开的角度
+     * @param aspect x/y(窗口横纵比)
+     * @param near 近裁面
+     * @param far 远裁面
+     */
     setPerspective(fovy: number, aspect: number, near: number, far: number): Matrix4;
     perspective(fovy: number, aspect: number, near: number, far: number): Matrix4;
     setScale(x: number, y: number, z: number): Matrix4;
