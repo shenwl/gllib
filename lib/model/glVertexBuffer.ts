@@ -24,6 +24,10 @@ export class GLVertexBuffer {
     this.program = program;
     this.location = this.gl.getAttribLocation(this.program, name);
 
+    if (this.location < 0) {
+      throw Error('[getAttribLocation fail]: ' + name);
+    }
+
     /* 初始化Buffer */
     this.buffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
