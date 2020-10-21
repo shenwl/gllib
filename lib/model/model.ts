@@ -43,7 +43,7 @@ export class Model {
 
   setMatrixUniform = (name: string, value: Float32List) => {
     const position = this.gl.getUniformLocation(this.program, name)
-
+    
     if (value.length === 4) {
       this.gl.uniformMatrix2fv(position, false, value)
     } else if (value.length === 9) {
@@ -98,15 +98,8 @@ export class Model {
     if (this.mesh) {
       this.textures.forEach(tex => tex.associate());
 
-      // 加一些参数
-      gl.enable(gl.DEPTH_TEST);
-      gl.depthFunc(gl.LEQUAL);
-      gl.clearColor(0, 0, 0, 1)
-      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
       this.mesh.draw(mode);
     }
-    this.children.forEach(child => child.draw());
+    this.children.forEach(child => child.draw(mode));
   }
 }
