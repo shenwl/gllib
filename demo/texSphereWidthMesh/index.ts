@@ -46,6 +46,13 @@ function __main__() {
     const mvpMatrix = new Matrix4();
     mvpMatrix.setPerspective(30, 1, 1, 100).lookAt(3, 3, 7, 0, 0, 0, 0, 1, 0).rotate(angle, 0, 1, 0);
 
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.clearDepth(1.0);
+    gl.viewport(0.0, 0.0, canvas.width, canvas.height);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
     model.setMatrixUniform('u_MvpMatrix', mvpMatrix.elements)
     model.draw(gl.TRIANGLE_STRIP);
 
