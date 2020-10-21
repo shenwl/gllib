@@ -7,16 +7,16 @@ import ImageTexture from './imageTexture';
  * 自己的矩阵变量名必须为u_Unit
  */
 export class Model {
-  mesh: Mesh;
   gl: WebGLRenderingContext;
   program: WebGLProgram;
   children: Model[];
+  mesh?: Mesh;
   parent?: Model;
   textures: ImageTexture[];
   worldMatrix?: Matrix4;  // 继承而来的矩阵(跟随旋转)
   unitMatrix?: Matrix4;   // 自己的矩阵(自己旋转)
 
-  constructor(gl: WebGLRenderingContext, program: WebGLProgram, mesh: Mesh) {
+  constructor(gl: WebGLRenderingContext, program: WebGLProgram, mesh?: Mesh) {
     this.mesh = mesh;
     this.gl = gl;
     this.program = program;
@@ -82,7 +82,7 @@ export class Model {
    */
   updateMatrix(parentWorldMatrix: Matrix4, parentUnitMatrix: Matrix4) {
     if (parentUnitMatrix) {
-      this.worldMatrix = parentWorldMatrix.multiply(parentUnitMatrix);
+      this.worldMatrix = new Matrix4().multiply(parentWorldMatrix).multiply(parentUnitMatrix);
     }
     for (let child of this.children) {
       child.updateMatrix(this.worldMatrix, this.unitMatrix);
