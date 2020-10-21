@@ -26,7 +26,7 @@ export class Model {
     this.gl.useProgram(this.program);
   }
 
-  setVectorUniform(name: string, value: Float32List) {
+  setVectorUniform = (name: string, value: Float32List) => {
     const position = this.gl.getUniformLocation(this.program, name)
 
     if (value.length === 2) {
@@ -41,7 +41,7 @@ export class Model {
     throw new Error('setVectorUniform error, value length must be 2/3/4, but get: ' + value.length);
   }
 
-  setMatrixUniform(name: string, value: Float32List) {
+  setMatrixUniform = (name: string, value: Float32List) => {
     const position = this.gl.getUniformLocation(this.program, name)
 
     if (value.length === 4) {
@@ -53,25 +53,25 @@ export class Model {
     }
   }
 
-  setFloatUniform(name: string, value: GLfloat) {
+  setFloatUniform = (name: string, value: GLfloat) => {
     const position = this.gl.getUniformLocation(this.program, name)
     this.gl.uniform1f(position, value)
   }
 
-  setUnitMatrix(unitMatrix: Matrix4) {
+  setUnitMatrix = (unitMatrix: Matrix4) => {
     this.unitMatrix = unitMatrix;
   }
 
-  setWorldMatrix(worldMatrix: Matrix4) {
+  setWorldMatrix = (worldMatrix: Matrix4) => {
     this.worldMatrix = worldMatrix;
   }
 
-  addChild(model: Model) {
+  addChild = (model: Model) => {
     model.parent = this;
     this.children.push(model);
   }
 
-  addTextureImage(url: string) {
+  addTextureImage = (url: string) => {
     this.textures.push(new ImageTexture(this.gl, this.program, url))
   }
 
@@ -80,8 +80,8 @@ export class Model {
    * @param {Matrix4} parentWorldMatrix 
    * @param {Matrix4} parentUnitMatrix 
    */
-  updateMatrix(parentWorldMatrix: Matrix4, parentUnitMatrix: Matrix4) {
-    if (parentUnitMatrix) {
+  updateMatrix = (parentWorldMatrix?: Matrix4, parentUnitMatrix?: Matrix4) => {
+    if (parentWorldMatrix && parentUnitMatrix) {
       this.worldMatrix = new Matrix4().multiply(parentWorldMatrix).multiply(parentUnitMatrix);
     }
     for (let child of this.children) {
@@ -89,7 +89,7 @@ export class Model {
     }
   }
 
-  draw(mode: GLenum = WebGLRenderingContext.TRIANGLES) {
+  draw = (mode: GLenum = WebGLRenderingContext.TRIANGLES) => {
     const gl = this.gl;
 
     this.unitMatrix && this.setMatrixUniform('u_Unit', this.unitMatrix.elements);
@@ -97,6 +97,7 @@ export class Model {
 
     if (this.mesh) {
       this.textures.forEach(tex => tex.associate());
+
       // 加一些参数
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
@@ -106,7 +107,6 @@ export class Model {
 
       this.mesh.draw(mode);
     }
-
     this.children.forEach(child => child.draw());
   }
 }
