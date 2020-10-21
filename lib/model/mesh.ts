@@ -1,16 +1,6 @@
 import { GLVertexBuffer } from './glVertexBuffer';
 import { GLIndexBuffer } from './glIndexBuffer';
 
-interface IOptions {
-  gl: WebGLRenderingContext,
-  program: WebGLProgram,
-  vertexes: number[];
-  indices?: number[];
-  texCoords?: number[];
-  colors?: number[];
-  dimension?: number;
-}
-
 /**
  * 网格类
  * 使用规则：
@@ -32,7 +22,15 @@ export class Mesh {
   texCoordsBuffer: GLIndexBuffer;
   customVerticesBuffer: GLIndexBuffer[];
 
-  constructor(options: IOptions) {
+  constructor(options: {
+    gl: WebGLRenderingContext,
+    program: WebGLProgram,
+    vertexes: number[];
+    indices?: number[];
+    texCoords?: number[];
+    colors?: number[];
+    dimension?: number;
+  }) {
     const { gl, program, vertexes, indices = null, dimension = 3, colors = null, texCoords } = options;
     this.dimension = dimension;
     this.indices = indices;
