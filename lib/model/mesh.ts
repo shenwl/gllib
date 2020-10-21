@@ -6,9 +6,9 @@ interface IOptions {
   program: WebGLProgram,
   vertexes: number[];
   indices?: number[];
-  dimension?: number;
-  texCoords?: number;
+  texCoords?: number[];
   colors?: number[];
+  dimension?: number;
 }
 
 /**
@@ -65,7 +65,7 @@ export class Mesh {
     ));
   }
 
-  draw() {
+  draw(mode: GLenum = WebGLRenderingContext.TRIANGLES) {
     const { gl } = this;
 
     this.vertexBuffer.associate();
@@ -79,7 +79,7 @@ export class Mesh {
 
     if (this.indicesBuffer) {
       gl.drawElements(
-        gl.TRIANGLES,
+        mode,
         this.indices.length,
         gl.UNSIGNED_SHORT,
         0,
@@ -87,7 +87,7 @@ export class Mesh {
       return;
     }
     gl.drawArrays(
-      gl.TRIANGLES,
+      mode,
       0,
       this.vertexes.length / this.dimension,
     );

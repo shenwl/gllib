@@ -39,16 +39,16 @@ export class Model {
     }
   }
 
-  draw() {
+  draw(mode: GLenum = WebGLRenderingContext.TRIANGLES) {
     const gl = this.gl;
     // 加一些参数
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
-    gl.clearColor(0.5, 0.5, 0.5, 0.9);
-    gl.clearDepth(1.0);
+    gl.clearColor(0, 0, 0, 1)
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    this.mesh.draw();
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+    this.mesh.draw(mode);
   }
 }
