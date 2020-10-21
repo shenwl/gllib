@@ -25,17 +25,19 @@ export default class ImageTexture {
       //   new Uint8Array([0, 255, 0, 255])
       // );
 
-      const id = counter++;
+      const id = counter;
+      counter++;
 
-      textures[src] = { texture, id }
+      const texUnitKey = `TEXTURE${id}`;
+      textures[src] = { texture, id };
+
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
       const image = new Image();
       image.src = src;
 
       image.onload = () => {
-        gl.activeTexture(
-          gl.TEXTURE0 + id
-        );
+        gl.activeTexture((gl as any)[texUnitKey]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(
           gl.TEXTURE_2D, // bind point
@@ -65,7 +67,7 @@ export default class ImageTexture {
   texture: { texture: WebGLTexture, id: number };
   textureLocation: WebGLUniformLocation;
 
-  constructor(gl: WebGLRenderingContext, program: WebGLProgram, src: string, name: string = 'u_texture') {
+  constructor(gl: WebGLRenderingContext, program: WebGLProgram, src: string, name: string = 'u_Texture') {
     this.gl = gl
     this.program = program
     this.name = name
