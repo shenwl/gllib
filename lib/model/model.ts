@@ -1,14 +1,28 @@
+import { Matrix4 } from '../matrix/matrix';
 import { Mesh } from './mesh';
+import ImageTexture from './imageTexture';
 
+/**
+ * 世界矩阵变量名必须为u_World
+ * 自己的矩阵变量名必须为u_Unit
+ */
 export class Model {
   mesh: Mesh;
   gl: WebGLRenderingContext;
   program: WebGLProgram;
+  children: Model[];
+  parent?: Model;
+  textures: ImageTexture[];
+  worldMatrix?: Matrix4;  // 继承而来的矩阵(跟随旋转)
+  unitMatrix?: Matrix4;   // 自己的矩阵(自己旋转)
 
   constructor(gl: WebGLRenderingContext, program: WebGLProgram, mesh: Mesh) {
     this.mesh = mesh;
     this.gl = gl;
     this.program = program;
+    this.children = [];
+    this.textures = [];
+
     this.gl.useProgram(this.program);
   }
 
@@ -39,16 +53,60 @@ export class Model {
     }
   }
 
+  setFloatUniform(name: string, value: GLfloat) {
+    const position = this.gl.getUniformLocation(this.program, name)
+    this.gl.uniform1f(position, value)
+  }
+
+  setUnitMatrix(unitMatrix: Matrix4) {
+    this.unitMatrix = unitMatrix;
+  }
+
+  setWorldMatrix(worldMatrix: Matrix4) {
+    this.worldMatrix = worldMatrix;
+  }
+
+  addChild(model: Model) {
+    model.parent = this;
+    this.children.push(model);
+  }
+
+  addTextureImage(url: string) {
+    this.textures.push(new ImageTexture(this.gl, this.program, url))
+  }
+
+  /**
+   * 递归更新世界矩阵 
+   * @param {Matrix4} parentWorldMatrix 
+   * @param {Matrix4} parentUnitMatrix 
+   */
+  updateMatrix(parentWorldMatrix: Matrix4, parentUnitMatrix: Matrix4) {
+    if (parentUnitMatrix) {
+      this.worldMatrix = parentWorldMatrix.multiply(parentUnitMatrix);
+    }
+    for (let child of this.children) {
+      child.updateMatrix(this.worldMatrix, this.unitMatrix);
+    }
+  }
+
   draw(mode: GLenum = WebGLRenderingContext.TRIANGLES) {
     const gl = this.gl;
-    // 加一些参数
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
-    gl.clearColor(0, 0, 0, 1)
 
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    
-    this.mesh.draw(mode);
+    this.unitMatrix && this.setMatrixUniform('u_Unit', this.unitMatrix.elements);
+    this.worldMatrix && this.setMatrixUniform('u_World', this.worldMatrix.elements);
+
+    if (this.mesh) {
+      this.textures.forEach(tex => tex.associate());
+      // 加一些参数
+      gl.enable(gl.DEPTH_TEST);
+      gl.depthFunc(gl.LEQUAL);
+      gl.clearColor(0, 0, 0, 1)
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+      this.mesh.draw(mode);
+    }
+
+    this.children.forEach(child => child.draw());
   }
 }
