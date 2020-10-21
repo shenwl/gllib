@@ -11,17 +11,19 @@ export default class ImageTexture {
         gl.TEXTURE_2D,
         texture
       );
-      gl.texImage2D(
-        gl.TEXTURE_2D, // bind point(target)
-        0, // level of detail(0 代表整张图片， n代表第n级的mipmap)
-        gl.RGBA, // internal format 格式
-        1, // width
-        1, // height
-        0, // border
-        gl.RGBA, // 格式(format)
-        gl.UNSIGNED_BYTE,
-        new Uint8Array([0, 255, 0, 255])
-      );
+
+      // @todo 可以在这放Image异步加载之前用的图像
+      // gl.texImage2D(
+      //   gl.TEXTURE_2D, // bind point(target)
+      //   0, // level of detail(0 代表整张图片， n代表第n级的mipmap)
+      //   gl.RGBA, // internal format 格式
+      //   1, // width
+      //   1, // height
+      //   0, // border
+      //   gl.RGBA, // 格式(format)
+      //   gl.UNSIGNED_BYTE,
+      //   new Uint8Array([0, 255, 0, 255])
+      // );
 
       const id = counter++;
 
