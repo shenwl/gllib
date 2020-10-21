@@ -31,7 +31,7 @@ class Head extends Model {
     super(gl, program, new Mesh({ gl, program, ...Shapes.createD3Sphere(0.3) }));
 
     const mat4 = new Matrix4();
-    this.setUnitMatrix(mat4.translate(0, 0.8, 0).rotate(90, 0, 1, 0));
+    this.setUnitMatrix(mat4.translate(0, 0.9, 0).rotate(90, 0, 1, 0));
     this.addTextureImage(face);
   }
 
@@ -63,10 +63,13 @@ class Arm extends Model {
 
   private matrix(angleX: number, angleZ: number) {
     const mat4 = new Matrix4();
+
     mat4.translate(0, -this.length / 2, 0);
     if (angleX) mat4.rotate(angleX, 1, 0, 0);
     if (angleZ) mat4.rotate(angleZ, 0, 0, 1);
+    mat4.translate(0, this.length / 2, 0);
     mat4.translate(this.x, this.y, 0);
+
     return mat4;
   }
 
@@ -80,18 +83,19 @@ class Arm extends Model {
     this.setUnitMatrix(this.matrix(angleX, angleZ));
     this.addTextureImage(arm);
 
-    if (this.level !== 1) {
+    if (this.level < 1) {
       const sign = isLeft ? 1 : -1
       this.addChild(new Arm({
-        gl, program,
-        isLeft: true,
+        gl, 
+        program,
+        isLeft,
         x: 0,
         y: -length,
         angleX: 0,
-        angleZ: sign * 30,
-        length: length,
+        angleZ: sign * 0.3 * Math.PI,
+        length,
         size: .08,
-        level: this.level + 1
+        level: this.level + 1,
       }))
     }
   }
