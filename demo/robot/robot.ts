@@ -139,4 +139,8 @@ export default class Robot extends Model {
     this.addChild(this.leftLeg);
     this.addChild(this.rightLeg);
   }
+
+  lookAt = (angleX: number) => {
+    this.header.lookAt(angleX);
+  }
 }
