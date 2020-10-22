@@ -120,10 +120,10 @@ export default class Robot extends Model {
     this.header = new Head(gl, program);
     this.body = new Body(gl, program);
     this.leftArm = new Arm({
-      gl, program, isLeft: true, length: 0.5, size: 0.1, x: -0.45, y: 0.22, angleX: 0, angleZ: -36,
+      gl, program, isLeft: true, length: 0.5, size: 0.1, x: -0.55, y: -0.1, angleX: 0, angleZ: -36,
     });
     this.rightArm = new Arm({
-      gl, program, isLeft: false, length: 0.5, size: 0.1, x: 0.45, y: 0.22, angleX: 0, angleZ: 36,
+      gl, program, isLeft: false, length: 0.5, size: 0.1, x: 0.55, y: -0.1, angleX: 0, angleZ: 36,
     });
     this.leftLeg = new Leg({
       gl, program, isLeft: true, length: 0.8, size: 0.15, x: -0.2, y: -0.5, angleX: 0, angleZ: -18,
