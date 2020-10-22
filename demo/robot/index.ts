@@ -34,22 +34,14 @@ function __main__() {
   const program = Utils.initShader(gl, vShader, fShader);
 
   const robotModel = new Robot(gl, program);
-
-  let shakeAngle = 0;
-  let angleStep = 5;
+  robotModel.walk();
 
   const draw = () => {
-    shakeAngle += angleStep;
-    if (shakeAngle >= 90 || shakeAngle <= 0) {
-      angleStep = - angleStep;
-    }
-
     const mat4 = new Matrix4()
     mat4.setPerspective(30, 1, 1, 100).lookAt(2, 3, 10, 0, 0, 0, 0, 1, 0);
 
     robotModel.setWorldMatrix(mat4);
     robotModel.updateMatrix();
-    robotModel.lookAt(shakeAngle);
 
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);

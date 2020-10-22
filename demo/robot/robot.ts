@@ -8,10 +8,12 @@
  * 
  * 下层的每个节点有个继承而来的矩阵(跟随旋转)，和一个自己的矩阵(自己旋转)
  */
-import { Shapes, Matrix4, Mesh, Model } from '../../lib/index';
+import { Shapes, Matrix4, Mesh, Model, Utils } from '../../lib/index';
 import face from './images/face.jpg';
 import body from './images/body.jpg';
 import arm from './images/arm.jpg';
+
+const timing = new Utils.Timing();
 
 type ArmProps = {
   gl: WebGLRenderingContext,
@@ -86,7 +88,7 @@ class Arm extends Model {
     if (this.level < 1) {
       const sign = isLeft ? 1 : -1
       this.addChild(new Arm({
-        gl, 
+        gl,
         program,
         isLeft,
         x: 0,
@@ -142,5 +144,30 @@ export default class Robot extends Model {
 
   lookAt = (angleX: number) => {
     this.header.lookAt(angleX);
+  }
+
+  /**
+   * 行走动画
+   * @todo 目前挥手和抬腿动作比较鬼畜，需要后续优化
+   */
+  walk = () => {
+    const MAX_ANGLE_X = 45;
+
+    timing.listen(({ nowToListenAt }) => {
+      let angleX = Math.floor(nowToListenAt % 200) % 4 * MAX_ANGLE_X / 2.5;
+
+      this.lookAt(angleX * 0.3);
+
+      this.leftArm.rotate(angleX, -18);
+      (this.leftArm.children[0] as Arm).rotate(angleX * 0.1, 0);
+
+      this.rightArm.rotate(-angleX, 18);
+      (this.rightArm.children[0] as Arm).rotate(-angleX * 0.1, 0);
+
+      this.leftLeg.rotate(-angleX, -18);
+      this.rightLeg.rotate(angleX, 18);
+    });
+
+    timing.start();
   }
 }
