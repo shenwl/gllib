@@ -1,3 +1,9 @@
+import Timing from './timing';
+
+export {
+  Timing
+};
+
 export interface IExtendWebGLBuffer extends WebGLBuffer {
   num: number;
   type: GLenum;
@@ -179,7 +185,6 @@ export function createTextureLoader(texCount: number = 1) {
 
 export function createTexture(gl: WebGLRenderingContext, program: WebGLProgram, src: string) {
   const texture = gl.createTexture();
-
 }
 
 
