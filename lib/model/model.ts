@@ -84,8 +84,8 @@ export class Model {
    * @param {Matrix4} parentUnitMatrix 
    */
   updateMatrix = (parentWorldMatrix?: Matrix4, parentUnitMatrix?: Matrix4) => {
-    if (parentWorldMatrix && parentUnitMatrix) {
-      this.worldMatrix = new Matrix4().multiply(parentUnitMatrix).multiply(parentWorldMatrix);
+    if (parentUnitMatrix) {
+      this.worldMatrix = new Matrix4().multiply(parentWorldMatrix || new Matrix4()).multiply(parentUnitMatrix);
     }
     for (let child of this.children) {
       child.updateMatrix(this.worldMatrix, this.unitMatrix);
