@@ -45,7 +45,7 @@ function __main__() {
     }
 
     const mat4 = new Matrix4()
-    mat4.setPerspective(30, 1, 1, 100).lookAt(3, 3, 7, 0, 0, 0, 0, 1, 0);
+    mat4.setPerspective(30, 1, 1, 100).lookAt(2, 3, 10, 0, 0, 0, 0, 1, 0);
 
     robotModel.setWorldMatrix(mat4);
     robotModel.updateMatrix();
