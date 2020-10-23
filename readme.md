@@ -1,7 +1,7 @@
 # GLLIB
 对WebGL常见使用场景的封装
 
-## START
+## 开始
 
 ```bash
 git clone https://github.com/shenwl/gllib.git
@@ -9,3 +9,9 @@ cd gllib
 npm install
 npm start
 ```
+
+## 项目结构介绍
+|- demo (存放示例项目)
+|- lib  (存放类库代码)
+|- |- matrix (数学库，封装了4*4矩阵和向量)
+
