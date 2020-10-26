@@ -9,11 +9,21 @@
  * 下层的每个节点有个继承而来的矩阵(跟随旋转)，和一个自己的矩阵(自己旋转)
  */
 import { Shapes, Matrix4, Mesh, Model, Utils } from '../../lib/index';
+import { Shape } from '../../lib/shape/type';
 import face from './images/face.jpg';
 import body from './images/body.jpg';
 import arm from './images/arm.jpg';
 
-const { d3Cube } = Shapes;
+const { createD3Cylinder } = Shapes;
+
+const pickVIT = (shape: Shape) => {
+  const { vertexes, indices, texCoords } = shape;
+  return {
+    vertexes,
+    indices,
+    texCoords,
+  }
+}
 
 const timing = new Utils.Timing();
 
@@ -32,7 +42,7 @@ type ArmProps = {
 
 class Head extends Model {
   constructor(gl: WebGLRenderingContext, program: WebGLProgram) {
-    super(gl, program, new Mesh({ gl, program, ...Shapes.createD3Sphere(0.3) }));
+    super(gl, program, new Mesh({ gl, program, ...pickVIT(Shapes.createD3Sphere(0.3))}));
 
     const mat4 = new Matrix4();
     this.setUnitMatrix(mat4.translate(0, 0.9, 0).rotate(90, 0, 1, 0));
@@ -48,7 +58,7 @@ class Body extends Model {
   name: string;
 
   constructor(gl: WebGLRenderingContext, program: WebGLProgram) {
-    super(gl, program, new Mesh({ gl, program, ...({ vertexes: d3Cube.vertexes, indices: d3Cube.indices}) }));
+    super(gl, program, new Mesh({ gl, program, ...pickVIT(Shapes.d3Cube) }));
     this.name = 'body';
 
     const mat4 = new Matrix4();
@@ -78,7 +88,7 @@ class Arm extends Model {
   }
 
   constructor({ gl, program, isLeft, length, x, y, size, angleX, angleZ, level = 0 }: ArmProps) {
-    super(gl, program, new Mesh({ gl, program, ...Shapes.createD3Cylinder(size, length) }));
+    super(gl, program, new Mesh({ gl, program, ...pickVIT(createD3Cylinder(size, length))}));
     this.level = level;
     this.x = x;
     this.y = y;

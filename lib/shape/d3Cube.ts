@@ -1,11 +1,6 @@
-export interface ID3Cube {
-  vertexes: number[];
-  indices: number[];
-  texCoords: number[];
-  norms: number[];
-}
+import { Shape } from './type';
 
-const createD3Cube = (): ID3Cube => {
+const createD3Cube = (): Shape => {
   const vertexes = [
     1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0,
     1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0,

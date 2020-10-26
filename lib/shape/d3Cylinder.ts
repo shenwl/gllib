@@ -2,6 +2,7 @@ export interface ID3Cylinder {
   vertexes: number[];
   indices: number[];
   texCoords: number[];
+  norms?: number[];
 }
 
 /**
@@ -14,6 +15,7 @@ export const createD3Cylinder = (r: number, l: number, n: number = 100): ID3Cyli
   const vertexes: number[] = [];
   const indices: number[] = [];
   const texCoords: number[] = [];
+  const norms: number[] = [];
 
   for (let i = 0; i <= n; i++) {
     const u = i / n;
@@ -22,10 +24,12 @@ export const createD3Cylinder = (r: number, l: number, n: number = 100): ID3Cyli
     const x = r * Math.cos(theta);
     const z = r * Math.sin(theta);
 
-    vertexes.push(x, -l / 2, z)
-    texCoords.push(u, 0)
-    vertexes.push(x, l / 2, z)
-    texCoords.push(u, 1)
+    vertexes.push(x, -l / 2, z);
+    norms.push(x, -l/2, 0);
+    texCoords.push(u, 0);
+    vertexes.push(x, l / 2, z);
+    norms.push(x, l/2, 0);
+    texCoords.push(u, 1);
   }
 
   for (let i = 0; i < n; i++) {
@@ -37,6 +41,7 @@ export const createD3Cylinder = (r: number, l: number, n: number = 100): ID3Cyli
     vertexes,
     indices,
     texCoords,
+    norms,
   };
 }
 
