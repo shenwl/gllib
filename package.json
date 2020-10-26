@@ -47,6 +47,7 @@
     "@babel/polyfill": "^7.2.5",
     "@babel/runtime": "^7.4.3",
     "@babel/runtime-corejs2": "^7.4.3",
+    "antd": "^4.7.3",
     "less": "^3.9.0",
     "lodash": "^4.17.15",
     "react": "^16.8.6",
