@@ -68,7 +68,7 @@ function __main__() {
     model.setVectorUniform('u_Light', new Float32Array([light.x, light.y, light.z]));
     model.updateMatrix();
 
-    gl.clearColor(0, 0, 0, 1)
+    gl.clearColor(0, 0, 0, 0)
     gl.enable(gl.DEPTH_TEST);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
