@@ -74,8 +74,8 @@ export class Model {
     this.children.push(model);
   }
 
-  addTextureImage = (url: string) => {
-    this.textures.push(new ImageTexture(this.gl, this.program, url))
+  addTextureImage = (url: string, uniform?: string) => {
+    this.textures.push(new ImageTexture(this.gl, this.program, url, uniform))
   }
 
   /**

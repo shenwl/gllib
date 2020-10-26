@@ -62,22 +62,22 @@ export default class ImageTexture {
 
   gl: WebGLRenderingContext;
   program: WebGLProgram;
-  name: string;
+  uniform: string;
   src: string;
   texture: { texture: WebGLTexture, id: number };
   textureLocation: WebGLUniformLocation;
 
-  constructor(gl: WebGLRenderingContext, program: WebGLProgram, src: string, name: string = 'u_Texture') {
+  constructor(gl: WebGLRenderingContext, program: WebGLProgram, src: string, uniform: string = 'u_Texture') {
     this.gl = gl
     this.program = program
-    this.name = name
+    this.uniform = uniform
     this.src = src
     this.texture = ImageTexture.createTextureIfNotExits(gl, src);
   }
 
 
   associate() {
-    this.textureLocation = this.gl.getUniformLocation(this.program, this.name);
+    this.textureLocation = this.gl.getUniformLocation(this.program, this.uniform);
     this.gl.uniform1i(this.textureLocation, this.texture.id)
   }
 }
