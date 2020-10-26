@@ -49,7 +49,7 @@ export class Mesh {
       this.colorsBuffer = new GLVertexBuffer(gl, program, 'a_Color', new Float32Array(colors), dimension);
     }
     if (norms) {
-      this.normsBuffer = new GLVertexBuffer(gl, program, 'a_Normal', new Float32Array(colors), dimension);
+      this.normsBuffer = new GLVertexBuffer(gl, program, 'a_Normal', new Float32Array(norms), dimension);
     }
     if (texCoords) {
       this.texCoordsBuffer = new GLVertexBuffer(gl, program, 'a_Texcoord', new Float32Array(texCoords), 2);
