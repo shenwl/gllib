@@ -18,25 +18,25 @@ module.exports = {
   },
   module: {
     rules: [{
-        test: /\.(ts|tsx)$/,
-        exclude: /node_modules/,
-        loader: "ts-loader",
-      },
-      {
-        test: /\.js$/,
-        exclude: /(node_modules)/,
-        use: {
-          loader: 'babel-loader'
-        }
-      },
-      {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"]
-      },
-      {
-        test: /\.jpg|.jpeg|.png$/,
-        loader: 'file-loader'
+      test: /\.(ts|tsx)$/,
+      exclude: /node_modules/,
+      loader: "ts-loader",
+    },
+    {
+      test: /\.js$/,
+      exclude: /(node_modules)/,
+      use: {
+        loader: 'babel-loader'
       }
+    },
+    {
+      test: /\.css$/,
+      use: ["style-loader", "css-loader"]
+    },
+    {
+      test: /\.jpg|.jpeg|.png$/,
+      loader: 'file-loader'
+    }
     ]
   },
   devServer: {
@@ -54,51 +54,10 @@ module.exports = {
       })
 
       demos.forEach(dir => {
+        if (dir === 'common') return;
         app.get('/' + dir, (req, res) => {
           let content = fs.readFileSync(path.resolve(__dirname, 'demo', dir, "index.html"), 'utf-8')
           content = content.replace("__APP__", dir)
-
-          function replaceShader(pattern, base) {
-            const reg = new RegExp(pattern)
-            if (content.match(reg)) {
-              const regWithName = new RegExp(pattern + "\\((.*)\\)")
-              const m = content.match(
-                regWithName
-              )
-              let name = base + ".glsl"
-              let short = ''
-              if (m && m[1]) {
-                short = m[1]
-                name = base + "-" + m[1] + ".glsl"
-              }
-
-              const program = fs.readFileSync(
-                path.resolve(
-                  __dirname,
-                  "demo",
-                  dir,
-                  name
-                ),
-                "utf-8"
-              )
-              if (short) {
-                content = content.replace(
-                  `${pattern}(${short})`,
-                  program
-                )
-              } else {
-                content = content.replace(
-                  pattern,
-                  program
-                )
-              }
-              return true
-            }
-            return false
-          }
-
-          while (replaceShader('__VERTEX_SHADER__', 'vertex'));
-          while (replaceShader('__FRAGMENT_SHADER__', 'frag'));
           res.send(content)
         })
       })
