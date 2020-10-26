@@ -16,12 +16,13 @@ import arm from './images/arm.jpg';
 
 const { createD3Cylinder } = Shapes;
 
-const pickVIT = (shape: Shape) => {
-  const { vertexes, indices, texCoords } = shape;
+const pickShapeParams = (shape: Shape) => {
+  const { vertexes, indices, texCoords, norms } = shape;
   return {
     vertexes,
     indices,
     texCoords,
+    norms,
   }
 }
 
@@ -42,7 +43,7 @@ type ArmProps = {
 
 class Head extends Model {
   constructor(gl: WebGLRenderingContext, program: WebGLProgram) {
-    super(gl, program, new Mesh({ gl, program, ...pickVIT(Shapes.createD3Sphere(0.3))}));
+    super(gl, program, new Mesh({ gl, program, ...pickShapeParams(Shapes.createD3Sphere(0.3))}));
 
     const mat4 = new Matrix4();
     this.setUnitMatrix(mat4.translate(0, 0.9, 0).rotate(90, 0, 1, 0));
@@ -58,7 +59,7 @@ class Body extends Model {
   name: string;
 
   constructor(gl: WebGLRenderingContext, program: WebGLProgram) {
-    super(gl, program, new Mesh({ gl, program, ...pickVIT(Shapes.d3Cube) }));
+    super(gl, program, new Mesh({ gl, program, ...pickShapeParams(Shapes.d3Cube) }));
     this.name = 'body';
 
     const mat4 = new Matrix4();
@@ -88,7 +89,7 @@ class Arm extends Model {
   }
 
   constructor({ gl, program, isLeft, length, x, y, size, angleX, angleZ, level = 0 }: ArmProps) {
-    super(gl, program, new Mesh({ gl, program, ...pickVIT(createD3Cylinder(size, length))}));
+    super(gl, program, new Mesh({ gl, program, ...pickShapeParams(createD3Cylinder(size, length))}));
     this.level = level;
     this.x = x;
     this.y = y;
