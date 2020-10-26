@@ -47,7 +47,10 @@ module.exports = {
     before: (app) => {
       app.get('/', (req, res) => {
         let content = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8')
-        const menuStr = demos.map(app => `<li><a class='menu-item' data-link='${app}'>${app}</a></li>`).join('\n')
+        const menuStr = demos.map(app => {
+          if (app === 'common') return '';
+          return `<li><a class='menu-item' data-link='${app}'>${app}</a></li>`
+        }).join('\n')
         content = content.replace("__MENU__", menuStr)
 
         res.send(content)
