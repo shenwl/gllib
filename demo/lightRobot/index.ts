@@ -47,13 +47,17 @@ function __main__() {
   const robotModel = new Robot(gl, program);
   robotModel.walk();
 
+  let angle = 0;
+
   const draw = () => {
+    angle += 1;
+    
     const mvp = new Matrix4()
     mvp.setPerspective(30, 1, 1, 100).lookAt(2, 3, 10, 0, 0, 0, 0, 1, 0);
 
     robotModel.setMatrixUniform("u_Mvp", mvp.elements)
 
-    robotModel.setWorldMatrix(new Matrix4());
+    robotModel.setWorldMatrix(new Matrix4().rotate(angle, 0, 1, 0));
     robotModel.setVectorUniform('u_Light', new Float32Array([0, -0.1, -1]));
     robotModel.updateMatrix();
 
