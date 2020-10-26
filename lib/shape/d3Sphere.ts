@@ -1,7 +1,6 @@
-export interface ID3Sphere {
-  vertexes: number[];
-  indices: number[];
-  texCoords: number[];
+import { Shape } from "./type";
+
+export interface ID3Sphere extends Shape {
   randomColors: number[];
 }
 
@@ -17,6 +16,7 @@ export const createD3Sphere = (r: number = 1, n: number = 20, m: number = 10): I
   const indices: number[] = [];
   const texCoords: number[] = [];
   const randomColors: number[] = [];
+  const norms: number[] = [];
 
   for (let y = 0; y <= m; y++) {
     for (let x = 0; x <= n; x++) {
@@ -36,6 +36,7 @@ export const createD3Sphere = (r: number = 1, n: number = 20, m: number = 10): I
       vertexes.push(px, py, pz);
 
       randomColors.push(Math.random(), Math.random(), Math.random(), 1);
+      norms.push(px, py, pz);
     }
   }
 
@@ -67,6 +68,7 @@ export const createD3Sphere = (r: number = 1, n: number = 20, m: number = 10): I
     indices,
     texCoords,
     randomColors,
+    norms,
   };
 }
 
