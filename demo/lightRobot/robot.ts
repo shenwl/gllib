@@ -141,10 +141,10 @@ export default class Robot extends Model {
       gl, program, isLeft: false, length: 0.5, size: 0.1, x: 0.51, y: -0.1, angleX: 0, angleZ: 36,
     });
     this.leftLeg = new Leg({
-      gl, program, isLeft: true, length: 0.8, size: 0.15, x: -0.2, y: -0.5, angleX: 0, angleZ: -18,
+      gl, program, isLeft: true, length: 0.8, size: 0.15, x: -0.2, y: -0.65, angleX: 0, angleZ: -18,
     });
     this.rightLeg = new Leg({
-      gl, program, isLeft: false, length: 0.8, size: 0.15, x: 0.2, y: -0.5, angleX: 0, angleZ: 18,
+      gl, program, isLeft: false, length: 0.8, size: 0.15, x: 0.2, y: -0.65, angleX: 0, angleZ: 18,
     });
 
     this.addChild(this.head);
@@ -198,8 +198,8 @@ export default class Robot extends Model {
       (this.leftArm.children[0] as Arm).rotate(ax * 0.3, 0);
       this.rightArm.rotate(-ax * 0.3, 18);
       (this.rightArm.children[0] as Arm).rotate(-ax * 0.3, 0);
-      this.leftLeg.rotate(-ax, -18);
-      this.rightLeg.rotate(ax, 18);
+      this.leftLeg.rotate(-ax, -5);
+      this.rightLeg.rotate(ax, 5);
     });
     timing.start();
   }
