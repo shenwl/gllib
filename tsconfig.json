@@ -1,23 +1,23 @@
 {
   "compilerOptions": {
-      "module": "es6",
-      "noImplicitAny": true,
-      "removeComments": true,
-      "outDir": "dist",
-      "sourceMap": true,
-      "target": "es5",
-      "allowJs": true,
-      "checkJs": false,
-      "moduleResolution": "node",
-      "jsx": "react",
+    "module": "es6",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "es5",
+    "allowJs": true,
+    "checkJs": false,
+    "moduleResolution": "node",
+    "jsx": "react",
   },
   "include": [
-      "lib/",
-      "test/",
-      "demo/"
+    "lib/",
+    "test/",
+    "demo/"
   ],
   "exclude": [
-      "node_modules",
-      "**/*.spec.ts"
+    "node_modules",
+    "**/*.spec.ts"
   ]
 }
