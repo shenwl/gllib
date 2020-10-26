@@ -4,7 +4,7 @@ import { GLIndexBuffer } from './glIndexBuffer';
 /**
  * 网格类
  * 使用规则：
- * glsl变量名称要求：顶点为a_Position，颜色为a_Color，材质坐标为a_Texcoord
+ * glsl变量名称要求：顶点为a_Position，颜色为a_Color，材质坐标为a_Texcoord，法向量a_Normal
  */
 export class Mesh {
   // 顶点坐标数组，描述有哪些顶点
@@ -12,7 +12,8 @@ export class Mesh {
   // 索引数组：描述顶点怎么组成三角形（3个一组）
   indices: number[];
   dimension: number;  // 维度，默认3维
-  texCoords: number;  // 材质映射坐标
+  texCoords: number[];  // 材质映射坐标
+  norms?: number[];  // 法向量
   gl: WebGLRenderingContext;
   program: WebGLProgram;
   vertexPosition: GLint;
@@ -20,6 +21,7 @@ export class Mesh {
   colorsBuffer: GLVertexBuffer;
   indicesBuffer: GLIndexBuffer;
   texCoordsBuffer: GLIndexBuffer;
+  normsBuffer: GLIndexBuffer;
   customVerticesBuffer: GLIndexBuffer[];
 
   constructor(options: {
@@ -29,9 +31,10 @@ export class Mesh {
     indices?: number[];
     texCoords?: number[];
     colors?: number[];
+    norms?: number[];
     dimension?: number;
   }) {
-    const { gl, program, vertexes, indices = null, dimension = 3, colors = null, texCoords } = options;
+    const { gl, program, vertexes, indices = null, dimension = 3, colors = null, texCoords, norms } = options;
     this.dimension = dimension;
     this.indices = indices;
     this.vertexes = vertexes;
@@ -44,6 +47,9 @@ export class Mesh {
 
     if (colors) {
       this.colorsBuffer = new GLVertexBuffer(gl, program, 'a_Color', new Float32Array(colors), dimension);
+    }
+    if (norms) {
+      this.normsBuffer = new GLVertexBuffer(gl, program, 'a_Normal', new Float32Array(colors), dimension);
     }
     if (texCoords) {
       this.texCoordsBuffer = new GLVertexBuffer(gl, program, 'a_Texcoord', new Float32Array(texCoords), 2);
@@ -70,6 +76,7 @@ export class Mesh {
     this.colorsBuffer && this.colorsBuffer.associate();
     this.indicesBuffer && this.indicesBuffer.associate();
     this.texCoordsBuffer && this.texCoordsBuffer.associate();
+    this.normsBuffer && this.normsBuffer.associate();
 
     this.customVerticesBuffer.forEach(buffer => {
       buffer.associate()

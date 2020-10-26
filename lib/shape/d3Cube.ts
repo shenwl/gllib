@@ -2,6 +2,7 @@ export interface ID3Cube {
   vertexes: number[];
   indices: number[];
   texCoords: number[];
+  norms: number[];
 }
 
 const createD3Cube = (): ID3Cube => {
@@ -32,10 +33,49 @@ const createD3Cube = (): ID3Cube => {
     0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0
   ]
 
+  const norms = [
+    // 左
+    -1, 0, 0,
+    -1, 0, 0,
+    -1, 0, 0,
+    -1, 0, 0,
+
+    //前
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+
+    // 右
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+
+    // 后
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+
+    // 上
+    0, 1, 0,
+    0, 1, 0,
+    0, 1, 0,
+    0, 1, 0,
+
+    // 下
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+  ];
+
   return {
     vertexes,
     indices,
     texCoords,
+    norms,
   };
 }
 
