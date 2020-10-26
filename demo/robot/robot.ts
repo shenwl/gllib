@@ -150,28 +150,32 @@ export default class Robot extends Model {
    * 产生一个行走动画，包含行走，摆臂，和摇头
    */
   walk = () => {
-    let A = 200;
+    let SPEED = 200;
     let MAX_ANGLE = 180 * 0.25;
     timing.listen(({ nowToListenAt }) => {
       // 产生一个挥手的动画
-      const stage = Math.floor(nowToListenAt / A) % 4;
+      const stage = Math.floor(nowToListenAt / SPEED) % 4;
       let ax = null;
 
+      // 挥手动画有3个阶段(往前往后)
+      // 0 -> | [0, A]
+      // 1 <- , 2 <- [A, -A]
+      // 3 -> [-A, 0]
       switch (stage) {
         case 0: {
-          const t = nowToListenAt % A;
-          ax = (t / A) * MAX_ANGLE;
+          const t = nowToListenAt % SPEED;
+          ax = (t / SPEED) * MAX_ANGLE;
           break
         }
         case 1:
         case 2: {
-          const t = (nowToListenAt - A) % (2 * A);
-          ax = MAX_ANGLE - 2 * MAX_ANGLE * (t / (2 * A));
+          const t = (nowToListenAt - SPEED) % (2 * SPEED);
+          ax = MAX_ANGLE - 2 * MAX_ANGLE * (t / (2 * SPEED));
           break
         }
         case 3: {
-          const t = (nowToListenAt - 3 * A) % A;
-          ax = -MAX_ANGLE + MAX_ANGLE * (t / A);
+          const t = (nowToListenAt - 3 * SPEED) % SPEED;
+          ax = -MAX_ANGLE + MAX_ANGLE * (t / SPEED);
           break;
         }
       }
