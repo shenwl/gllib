@@ -122,10 +122,10 @@ export default class Robot extends Model {
     this.header = new Head(gl, program);
     this.body = new Body(gl, program);
     this.leftArm = new Arm({
-      gl, program, isLeft: true, length: 0.5, size: 0.1, x: -0.55, y: -0.1, angleX: 0, angleZ: -36,
+      gl, program, isLeft: true, length: 0.5, size: 0.1, x: -0.51, y: 0, angleX: 0, angleZ: -36,
     });
     this.rightArm = new Arm({
-      gl, program, isLeft: false, length: 0.5, size: 0.1, x: 0.55, y: -0.1, angleX: 0, angleZ: 36,
+      gl, program, isLeft: false, length: 0.5, size: 0.1, x: 0.51, y: 0, angleX: 0, angleZ: 36,
     });
     this.leftLeg = new Leg({
       gl, program, isLeft: true, length: 0.8, size: 0.15, x: -0.2, y: -0.5, angleX: 0, angleZ: -18,
@@ -147,27 +147,43 @@ export default class Robot extends Model {
   }
 
   /**
-   * 行走动画
-   * @todo 目前挥手和抬腿动作比较鬼畜，需要后续优化
+   * 产生一个行走动画，包含行走，摆臂，和摇头
    */
   walk = () => {
-    const MAX_ANGLE_X = 45;
-
+    let A = 200;
+    let MAX_ANGLE = 180 * 0.25;
     timing.listen(({ nowToListenAt }) => {
-      let angleX = Math.floor(nowToListenAt % 200) % 4 * MAX_ANGLE_X / 2.5;
+      // 产生一个挥手的动画
+      const stage = Math.floor(nowToListenAt / A) % 4;
+      let ax = null;
 
-      this.lookAt(angleX * 0.3);
+      switch (stage) {
+        case 0: {
+          const t = nowToListenAt % A;
+          ax = (t / A) * MAX_ANGLE;
+          break
+        }
+        case 1:
+        case 2: {
+          const t = (nowToListenAt - A) % (2 * A);
+          ax = MAX_ANGLE - 2 * MAX_ANGLE * (t / (2 * A));
+          break
+        }
+        case 3: {
+          const t = (nowToListenAt - 3 * A) % A;
+          ax = -MAX_ANGLE + MAX_ANGLE * (t / A);
+          break;
+        }
+      }
 
-      this.leftArm.rotate(angleX, -18);
-      (this.leftArm.children[0] as Arm).rotate(angleX * 0.1, 0);
-
-      this.rightArm.rotate(-angleX, 18);
-      (this.rightArm.children[0] as Arm).rotate(-angleX * 0.1, 0);
-
-      this.leftLeg.rotate(-angleX, -18);
-      this.rightLeg.rotate(angleX, 18);
+      this.header.lookAt(ax * 0.3);
+      this.leftArm.rotate(ax, -Math.PI * 0.1);
+      (this.leftArm.children[0] as Arm).rotate(ax * 0.1, 0);
+      this.rightArm.rotate(-ax, Math.PI * 0.1);
+      (this.rightArm.children[0] as Arm).rotate(-ax * 0.1, 0);
+      this.leftLeg.rotate(-ax, -Math.PI * 0.1);
+      this.rightLeg.rotate(ax, Math.PI * 0.1);
     });
-
     timing.start();
   }
 }
