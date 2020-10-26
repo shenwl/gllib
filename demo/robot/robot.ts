@@ -13,6 +13,8 @@ import face from './images/face.jpg';
 import body from './images/body.jpg';
 import arm from './images/arm.jpg';
 
+const { d3Cube } = Shapes;
+
 const timing = new Utils.Timing();
 
 type ArmProps = {
@@ -46,7 +48,7 @@ class Body extends Model {
   name: string;
 
   constructor(gl: WebGLRenderingContext, program: WebGLProgram) {
-    super(gl, program, new Mesh({ gl, program, ...Shapes.d3Cube }));
+    super(gl, program, new Mesh({ gl, program, ...({ vertexes: d3Cube.vertexes, indices: d3Cube.indices}) }));
     this.name = 'body';
 
     const mat4 = new Matrix4();
