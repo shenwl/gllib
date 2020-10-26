@@ -110,7 +110,7 @@ class Arm extends Model {
 class Leg extends Arm { };
 
 export default class Robot extends Model {
-  header: Head;
+  head: Head;
   body: Body;
   leftArm: Arm;
   rightArm: Arm;
@@ -119,13 +119,13 @@ export default class Robot extends Model {
 
   constructor(gl: WebGLRenderingContext, program: WebGLProgram) {
     super(gl, program);
-    this.header = new Head(gl, program);
+    this.head = new Head(gl, program);
     this.body = new Body(gl, program);
     this.leftArm = new Arm({
-      gl, program, isLeft: true, length: 0.5, size: 0.1, x: -0.51, y: 0, angleX: 0, angleZ: -36,
+      gl, program, isLeft: true, length: 0.5, size: 0.1, x: -0.51, y: -0.1, angleX: 0, angleZ: -36,
     });
     this.rightArm = new Arm({
-      gl, program, isLeft: false, length: 0.5, size: 0.1, x: 0.51, y: 0, angleX: 0, angleZ: 36,
+      gl, program, isLeft: false, length: 0.5, size: 0.1, x: 0.51, y: -0.1, angleX: 0, angleZ: 36,
     });
     this.leftLeg = new Leg({
       gl, program, isLeft: true, length: 0.8, size: 0.15, x: -0.2, y: -0.5, angleX: 0, angleZ: -18,
@@ -134,7 +134,7 @@ export default class Robot extends Model {
       gl, program, isLeft: false, length: 0.8, size: 0.15, x: 0.2, y: -0.5, angleX: 0, angleZ: 18,
     });
 
-    this.addChild(this.header);
+    this.addChild(this.head);
     this.addChild(this.body);
     this.addChild(this.leftArm);
     this.addChild(this.rightArm);
@@ -143,7 +143,7 @@ export default class Robot extends Model {
   }
 
   lookAt = (angleX: number) => {
-    this.header.lookAt(angleX);
+    this.head.lookAt(angleX);
   }
 
   /**
@@ -176,13 +176,13 @@ export default class Robot extends Model {
         }
       }
 
-      this.header.lookAt(ax * 0.3);
-      this.leftArm.rotate(ax, -Math.PI * 0.1);
+      this.head.lookAt(ax * 0.3);
+      this.leftArm.rotate(ax, -18);
       (this.leftArm.children[0] as Arm).rotate(ax * 0.1, 0);
-      this.rightArm.rotate(-ax, Math.PI * 0.1);
+      this.rightArm.rotate(-ax, 18);
       (this.rightArm.children[0] as Arm).rotate(-ax * 0.1, 0);
-      this.leftLeg.rotate(-ax, -Math.PI * 0.1);
-      this.rightLeg.rotate(ax, Math.PI * 0.1);
+      this.leftLeg.rotate(-ax, -18);
+      this.rightLeg.rotate(ax, 18);
     });
     timing.start();
   }
