@@ -177,10 +177,10 @@ export default class Robot extends Model {
       }
 
       this.head.lookAt(ax * 0.3);
-      this.leftArm.rotate(ax, -18);
-      (this.leftArm.children[0] as Arm).rotate(ax * 0.1, 0);
-      this.rightArm.rotate(-ax, 18);
-      (this.rightArm.children[0] as Arm).rotate(-ax * 0.1, 0);
+      this.leftArm.rotate(ax * 0.3, -18);
+      (this.leftArm.children[0] as Arm).rotate(ax * 0.3, 0);
+      this.rightArm.rotate(-ax * 0.3, 18);
+      (this.rightArm.children[0] as Arm).rotate(-ax * 0.3, 0);
       this.leftLeg.rotate(-ax, -18);
       this.rightLeg.rotate(ax, 18);
     });
