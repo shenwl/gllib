@@ -1,5 +1,5 @@
 import { Shapes, Utils, Matrix4 } from '../../lib/index';
-import texImage from './images/tex256.jpg';
+import texImage from '../common/images/mon.jpg';
 
 const loadTexture = Utils.createTextureLoader();
 

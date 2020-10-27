@@ -1,0 +1,9 @@
+{
+  "cube": "立方体",
+  "texCube": "立方体贴图",
+  "sphere": "球体",
+  "texSphereWidthMesh": "球体贴图",
+  "robot": "层次模型",
+  "cubeSunlight": "平行光立方体",
+  "robotSunlight": "平行光层次模型"
+}

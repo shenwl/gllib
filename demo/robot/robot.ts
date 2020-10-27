@@ -10,9 +10,9 @@
  */
 import { Shapes, Matrix4, Mesh, Model, Utils } from '../../lib/index';
 import { Shape } from '../../lib/shape/type';
-import face from './images/face.jpg';
-import body from './images/body.jpg';
-import arm from './images/arm.jpg';
+import face from '../common/images/face.jpg';
+import body from '../common/images/body.jpg';
+import arm from '../common/images/arm.jpg';
 
 const { createD3Cylinder } = Shapes;
 

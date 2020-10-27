@@ -1,5 +1,5 @@
 import { Shapes, Utils, Matrix4, Mesh, Model } from '../../lib/index';
-import texImage from './images/mon.jpg';
+import texImage from '../common/images/map.jpg';
 
 const vShader = `
   attribute vec4 a_Position;

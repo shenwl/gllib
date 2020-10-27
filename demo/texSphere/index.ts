@@ -1,7 +1,6 @@
 import { Shapes, Utils, Matrix4 } from '../../lib/index';
-import texImage from './images/map.jpg';
-// import texImage from './images/mon.jpg';
-// import texImage from './images/face.jpg';
+import texImage from '../common/images/map.jpg';
+
 
 const loadTexture = Utils.createTextureLoader();
 
