@@ -17,7 +17,7 @@ const vShader = `
     vec3 surface = (u_World * a_Position).xyz;
     gl_Position = u_World * u_Unit * a_Position;
     v_Norm = mat3(u_World * u_Unit) * a_Normal;
-    v_SurfaceToCamera = u_Light - surface;
+    v_SurfaceToLight = u_Light - surface;
     v_SurfaceToCamera = u_Camera - surface;
   }
 `
@@ -44,7 +44,7 @@ const fShader = `
 `
 
 function __main__() {
-  const light = { x: 10, y: 100, z: -100 };
+  const light = { x: 0, y: 0, z: 0 };
 
   const gl = Utils.initGl(document.getElementById('canvas') as HTMLCanvasElement);
   const program = Utils.initShader(gl, vShader, fShader);
@@ -55,12 +55,19 @@ function __main__() {
   const model = new Model(gl, program, new Mesh({ gl, program, vertexes, indices, norms }));
 
   let angle = 0;
+  const camera: [number, number, number] = [6, 6, 14];
 
   const draw = () => {
     angle += 1;
 
-    model.setWorldMatrix(new Matrix4().setPerspective(30, 1, 1, 100).lookAt(6, 6, 14, 0, 0, 0, 0, 1, 0).rotate(angle, 0, 1, 0));
+    model.setWorldMatrix(
+      new Matrix4()
+        .setPerspective(30, 1, 1, 100)
+        .lookAt(camera[0], camera[1], camera[2], 0, 0, 0, 0, 1, 0)
+        .rotate(angle, 0, 1, 0)
+    );
     model.setVectorUniform('u_Light', new Float32Array([light.x, light.y, light.z]));
+    model.setVectorUniform('u_Camera', new Float32Array(camera));
     model.updateMatrix();
 
     gl.clearColor(0, 0, 0, 0)
