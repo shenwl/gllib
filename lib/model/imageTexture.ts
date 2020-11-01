@@ -57,7 +57,7 @@ export default class ImageTexture {
         }
       };
     };
-    return textures[src]
+    return textures[src];
   }
 
   gl: WebGLRenderingContext;
@@ -78,6 +78,6 @@ export default class ImageTexture {
 
   associate() {
     this.textureLocation = this.gl.getUniformLocation(this.program, this.uniform);
-    this.gl.uniform1i(this.textureLocation, this.texture.id)
+    this.gl.uniform1i(this.textureLocation, this.texture.id);
   }
 }
