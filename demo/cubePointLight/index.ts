@@ -14,7 +14,7 @@ const vShader = `
   varying vec3 v_SurfaceToLight;
 
   void main() {
-    vec3 surface = (u_World * a_Position).xyz;
+    vec3 surface = (u_World * u_Unit * a_Position).xyz;
     gl_Position = u_World * u_Unit * a_Position;
     v_Norm = mat3(u_World * u_Unit) * a_Normal;
     v_SurfaceToLight = u_Light - surface;
