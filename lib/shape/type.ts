@@ -3,4 +3,5 @@ export interface Shape {
   indices: number[];
   texCoords: number[];
   norms?: number[];
+  colors?: number[];
 }
