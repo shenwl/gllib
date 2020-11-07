@@ -33,7 +33,6 @@ export function d3Tiles(size: number, width: number, height: number): Shape {
       );
 
       const id = x * 1000 + y;
-
       for (let k = 0; k < 6; k++) {
         colors.push(
           (id & 255) / 255,
@@ -44,7 +43,7 @@ export function d3Tiles(size: number, width: number, height: number): Shape {
       ids.push(id, id, id, id, id, id);
     }
   }
-  return { vertexes, texCoords, indices: [], colors };
+  return { vertexes, texCoords, indices: [], colors, ids };
 }
 
 d3Tiles.getMesh = function (
@@ -52,7 +51,10 @@ d3Tiles.getMesh = function (
   program: WebGLProgram,
   size: number, width: number, height: number
 ) {
-  const { vertexes, texCoords, colors } = d3Tiles(size, width, height);
+  const { vertexes, texCoords, colors, ids } = d3Tiles(size, width, height);
+
   const mesh = new Mesh({ gl, program, vertexes, texCoords, colors });
+  mesh.addVertexBuffer('a_Id', new Float32Array(ids), 1);
+
   return mesh;
 }
