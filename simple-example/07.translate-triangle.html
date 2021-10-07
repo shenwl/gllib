@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triangle Tranlate</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+
+    input {
+      width: 80px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <canvas id="canvas" width="400" height="400">Not Support Canvas</canvas>
+  </div>
+  <script src="./utils.js"></script>
+  <script>
+    const vertexShader = `
+      attribute vec4 a_Position;
+      uniform mat4 u_RotationMatrix; // 旋转
+      uniform mat4 u_TransitionMatrix; // 平移
+      uniform mat4 u_ScaleMatrix; // 缩放
+
+      void main() {
+        gl_Position = u_TransitionMatrix * u_RotationMatrix * u_ScaleMatrix * a_Position;
+      }
+    `
+    const fragmentShader = `
+      void main() {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+      }
+    `
+
+    function __main__() {
+      const vertices = new Float32Array([
+        0, 0.5,
+        -0.5, -0.5,
+        0.5, -0.5,
+      ]);
+
+      // translate
+      let TRANSITION = [0.5, 0.5, 0.5];
+      let ANGLE = 36;
+      let SCALE = [0.3, 0.5, 0.5];
+
+      const gl = document.getElementById('canvas').getContext('webgl');
+      Utils.initShader(gl, vertexShader, fragmentShader);
+      gl.clearColor(0, 0, 0, 1);
+
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      const u_RotationMatrix = gl.getUniformLocation(gl.program, 'u_RotationMatrix');
+      const u_TransitionMatrix = gl.getUniformLocation(gl.program, 'u_TransitionMatrix');
+      const u_ScaleMatrix = gl.getUniformLocation(gl.program, 'u_ScaleMatrix');
+
+      function draw() {
+        const n = 3;
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        const { rotationMatrix, translationMatrix, scaleMatrix } = getMatrix(TRANSITION, ANGLE, SCALE);
+
+        gl.uniformMatrix4fv(u_RotationMatrix, false, rotationMatrix);
+        gl.uniformMatrix4fv(u_TransitionMatrix, false, translationMatrix);
+        gl.uniformMatrix4fv(u_ScaleMatrix, false, scaleMatrix);
+
+        const buffer = Utils.createBuffer(gl, vertices);
+        gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(a_Position);
+
+        gl.drawArrays(gl.TRIANGLES, 0, n);
+      }
+
+      draw();
+      initEvent();
+
+      function initEvent() {
+        window.onkeydown = e => {
+          console.log(e)
+          const code = e.code;
+          const isAlt = e.altKey;
+          const keyHandlerMap = {
+            ArrowLeft: () => TRANSITION[0] = TRANSITION[0] - 0.05,
+            ArrowRight: () => TRANSITION[0] = TRANSITION[0] + 0.05,
+            ArrowUp: () => TRANSITION[1] = TRANSITION[1] + 0.05,
+            ArrowDown: () => TRANSITION[1] = TRANSITION[1] - 0.05,
+            KeyX: () => SCALE[0] = SCALE[0] + 0.1,
+            keyY: () => SCALE[1] = SCALE[1] + 0.1,
+            keyZ: () => SCALE[2] = SCALE[2] + 0.1,
+          }
+          const altComposeKeyHandlerMap = {
+            ArrowLeft: () => ANGLE = ANGLE - 1,
+            ArrowRight: () => ANGLE = ANGLE + 1,
+            KeyX: () => SCALE[0] = SCALE[0] - 0.1,
+            keyY: () => SCALE[1] = SCALE[1] - 0.1,
+            keyZ: () => SCALE[2] = SCALE[2] - 0.1,
+          }
+          const handler = isAlt ? altComposeKeyHandlerMap[code] : keyHandlerMap[code];
+
+          handler && handler();
+
+          draw();
+        }
+      }
+    }
+
+    function getMatrix(TRANSITION, ANGLE, SCALE) {
+      const radian = Math.PI * ANGLE / 180;
+      const cosB = Math.cos(radian);
+      const sinB = Math.sin(radian);
+      const rotationMatrix = new Float32Array([
+        cosB, sinB, 0, 0,
+        -sinB, cosB, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1,
+      ]);
+      const translationMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        TRANSITION[0], TRANSITION[1], TRANSITION[2], 1,
+      ]);
+      const scaleMatrix = new Float32Array([
+        SCALE[0], 0, 0, 0,
+        0, SCALE[1], 0, 0,
+        0, 0, SCALE[2], 0,
+        0, 0, 0, 1,
+      ]);
+      return {
+        rotationMatrix, translationMatrix, scaleMatrix
+      }
+    }
+    __main__();
+  </script>
+</body>
+
+</html>

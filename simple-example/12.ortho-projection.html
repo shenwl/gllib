@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ViewVolume - Orthographic Projection</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <canvas id="canvas" width="400" height="400">Not Support Canvas</canvas>
+  </div>
+
+  <script src="./matrix.js"></script>
+  <script src="./utils.js"></script>
+  <script>
+    const vertexShader = `
+      attribute vec4 a_Position;
+      attribute vec4 a_Color;
+      uniform mat4 u_ProjectionMatrix;
+      varying vec4 v_Color;
+
+      void main() {
+        gl_Position = u_ProjectionMatrix * a_Position;
+        v_Color = a_Color;
+      }
+    `
+    const fragmentShader = `
+      precision mediump float;
+      varying vec4 v_Color;
+      void main() {
+        gl_FragColor = v_Color;
+      }
+    `
+    function __main__() {
+      const $canvas = document.getElementById('canvas');
+      const gl = $canvas.getContext('webgl');
+      Utils.initShader(gl, vertexShader, fragmentShader);
+
+      const eyePoint = [0.2, 0.25, 0.25]; // 视点坐标
+      let atPoint = [0, 0, 0]; // 观察点坐标
+      let upDirection = [0, 1, 0]; // 上方向
+      // 盒状可视空间配置
+      const orthoConfig = {
+        near: 0,
+        far: 0.5,
+        left: -1,
+        right: 1,
+        bottom: -1,
+        top: 1,
+      }
+
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+      const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
+      const u_ProjectionMatrix = gl.getUniformLocation(gl.program, 'u_ProjectionMatrix');
+
+      const vertices = new Float32Array([
+        0, 0.5, -0.4,
+        -0.5, -0.5, -0.4,
+        0.5, -0.5, -0.4,
+
+        0.5, 0.4, -0.2,
+        -0.5, 0.4, -0.2,
+        0, -0.6, -0.2,
+
+        0, 0.5, 0,
+        -0.5, -0.5, 0,
+        0.5, -0.5, 0,
+      ]);
+      const colors = new Float32Array([
+        // 绿色
+        0.2, 1, 0.4,
+        0.4, 1, 0.4,
+        1, 0.4, 0.4,
+
+        // 黄色
+        1, 0.4, 0.4,
+        1, 1, 0.4,
+        1, 0.4, 0.4,
+
+        // 蓝色
+        0.4, 0.4, 1,
+        0.4, 0.4, 1,
+        1, 0.4, 0.4,
+      ]);
+
+      function draw() {
+        const n = 9;
+
+        const projectionMatrix = new Matrix4().setOrtho(
+          orthoConfig.left, orthoConfig.right,
+          orthoConfig.bottom, orthoConfig.top,
+          orthoConfig.near, orthoConfig.far,
+        );
+        gl.uniformMatrix4fv(u_ProjectionMatrix, false, projectionMatrix.elements);
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        const vertexBuffer = Utils.createBuffer(gl, vertices);
+        gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(a_Position);
+
+        const colorBuffer = Utils.createBuffer(gl, colors);
+        gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(a_Color);
+
+        gl.drawArrays(gl.TRIANGLES, 0, n);
+      }
+
+      draw();
+
+      initEvent();
+      function initEvent() {
+        window.onkeydown = e => {
+          console.log(e)
+          const code = e.code;
+          const keyHandlerMap = {
+            ArrowRight: () => orthoConfig.near += 0.01,
+            ArrowLeft: () => orthoConfig.near -= 0.01,
+            ArrowUp: () => orthoConfig.far += 0.01,
+            ArrowDown: () => orthoConfig.far -= 0.01,
+          }
+
+          const handler = keyHandlerMap[code];
+
+          handler && handler();
+
+          draw();
+        }
+      }
+    }
+    __main__();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Point attribute</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+    input {
+      width: 80px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <canvas id="canvas" width="400" height="400">Not Support Canvas</canvas>
+    <div>
+      x: <input step="0.05" min="-1" max="1" type="number" name="x" id="x-input" value="0" />
+      y: <input step="0.05" min="-1" max="1" type="number" name="y" id="y-input" value="0" />
+      <!-- z: <input step="0.05" min="-1" max="1" type="number" name="z" id="z-input" value="0" /> -->
+      size: <input step="1" min="1" type="number" name="size" id="size-input" value="10" />
+    </div>
+  </div>
+
+  <script src="./utils.js"></script>
+  <script>
+    const vertexShader = `
+      attribute vec4 a_Position;
+      attribute float a_FontSize;
+
+      void main() {
+        gl_Position = a_Position;
+        gl_PointSize = a_FontSize;
+      }
+    `
+    const fragmentShader = `
+      void main() {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+      }
+    `
+
+    function __main__() {
+      const pointConfig = Utils.reactive({
+        position: [0, 0, 0],
+        size: 10,
+      });
+
+      const $canvas = document.getElementById('canvas');
+      const gl = $canvas.getContext('webgl');
+
+      Utils.initShader(gl, vertexShader, fragmentShader);
+
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      const a_FontSize = gl.getAttribLocation(gl.program, 'a_FontSize');
+      if (a_Position < 0 || a_FontSize < 0) throw Error(`[getAttribLocation fail] a_Position: ${a_Position}, a_FontSize: ${a_FontSize}`);
+
+      gl.clearColor(0, 0, 0, 1);
+
+      function draw() {
+        gl.vertexAttrib3f(a_Position, ...pointConfig.position);
+        gl.vertexAttrib1f(a_FontSize, pointConfig.size);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.POINTS, 0, 1);
+      }
+
+      Utils.effect(draw);
+
+      initEvent();
+      function initEvent() {
+        const $x = document.getElementById('x-input');
+        const $y = document.getElementById('y-input');
+        // const $z = document.getElementById('z-input');
+        const $size = document.getElementById('size-input');
+        $x.onchange = e => pointConfig.position[0] = e.target.value;
+        $y.onchange = e => pointConfig.position[1] = e.target.value;
+        // $z.onchange = e => pointConfig.position[2] = e.target.value;
+        $size.onchange = e => pointConfig.size = e.target.value;
+      }
+    }
+    __main__();
+  </script>
+</body>
+
+</html>

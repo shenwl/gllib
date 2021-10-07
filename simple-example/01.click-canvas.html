@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>clearColor</title>
+
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <canvas id="canvas" width="400" height="400">Not Support Canvas</canvas>
+    <h3>点击变换颜色 <span id="color-info"></span></h3>
+  </div>
+
+  <script>
+    function changeColorInfo(r, g, b, a) {
+      document.getElementById('color-info').innerText = `r: ${r}, g: ${g}, b: ${b}, a: ${a}`
+    }
+
+    function __main__() {
+      const $canvas = document.getElementById('canvas');
+      const gl = $canvas.getContext('webgl');
+
+      // 指定背景色
+      gl.clearColor(0, 0, 0, 1);
+      // 清空绘图区
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      // 点击修改指定背景色
+      $canvas.onclick = () => {
+        const colorVec4 = [
+          parseFloat(Math.random()).toFixed(2),
+          parseFloat(Math.random()).toFixed(2),
+          parseFloat(Math.random()).toFixed(2),
+          parseFloat(Math.random()).toFixed(2),
+        ];
+        changeColorInfo(...colorVec4)
+        console.log('颜色参数：', colorVec4)
+        gl.clearColor(...colorVec4);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+      }
+
+      changeColorInfo(0, 0, 0, 1)
+    }
+    __main__();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Look At Triangles</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <canvas id="canvas" width="400" height="400">Not Support Canvas</canvas>
+  </div>
+
+  <script src="./matrix.js"></script>
+  <script src="./utils.js"></script>
+  <script>
+    const vertexShader = `
+      attribute vec4 a_Position;
+      attribute vec4 a_Color;
+      uniform mat4 u_ModelViewMatrix;
+      varying vec4 v_Color;
+
+      void main() {
+        gl_Position = u_ModelViewMatrix * a_Position;
+        v_Color = a_Color;
+      }
+    `
+    const fragmentShader = `
+      precision mediump float;
+      varying vec4 v_Color;
+      void main() {
+        gl_FragColor = v_Color;
+      }
+    `
+    function __main__() {
+      const $canvas = document.getElementById('canvas');
+      const gl = $canvas.getContext('webgl');
+      Utils.initShader(gl, vertexShader, fragmentShader);
+
+      const eyePoint = [0.2, 0.25, 0.25]; // 视点坐标
+      let atPoint = [0, 0, 0]; // 观察点坐标
+      let upDirection = [0, 1, 0]; // 上方向
+
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+      const u_ModelViewMatrix = gl.getUniformLocation(gl.program, 'u_ModelViewMatrix');
+
+      const vertices = new Float32Array([
+        0, 0.5, -0.4,
+        -0.5, -0.5, -0.4,
+        0.5, -0.5, -0.4,
+
+        0.5, 0.4, -0.2,
+        -0.5, 0.4, -0.2,
+        0, -0.6, -0.2,
+
+        0, 0.5, 0,
+        -0.5, -0.5, 0,
+        0.5, -0.5, 0,
+      ]);
+      const colors = new Float32Array([
+        // 绿色
+        0.2, 1, 0.4,
+        0.4, 1, 0.4,
+        1, 0.4, 0.4,
+
+        // 黄色
+        1, 0.4, 0.4,
+        1, 1, 0.4,
+        1, 0.4, 0.4,
+
+        // 蓝色
+        0.4, 0.4, 1,
+        0.4, 0.4, 1,
+        1, 0.4, 0.4,
+      ]);
+
+      function draw() {
+        const n = 9;
+
+        const viewMatrix = new Matrix4();
+        viewMatrix.setLookAt(...eyePoint, ...atPoint, ...upDirection);
+        const modelMatrix = new Matrix4();
+        modelMatrix.setRotate(-10, 0, 0, 1).translate(0.2, 0.3, 0.2);
+        gl.uniformMatrix4fv(u_ModelViewMatrix, false, viewMatrix.multiply(modelMatrix).elements);
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        const vertexBuffer = Utils.createBuffer(gl, vertices);
+        gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(a_Position);
+
+        const colorBuffer = Utils.createBuffer(gl, colors);
+        gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(a_Color);
+
+        gl.drawArrays(gl.TRIANGLES, 0, n);
+      }
+
+      draw();
+
+      initEvent();
+      function initEvent() {
+        window.onkeydown = e => {
+          console.log(e)
+          const code = e.code;
+          const keyHandlerMap = {
+            ArrowRight: () => eyePoint[0] = eyePoint[0] + 0.1,
+            ArrowLeft: () => eyePoint[0] = eyePoint[0] - 0.1,
+            ArrowUp: () => eyePoint[1] = eyePoint[1] + 0.1,
+            ArrowDown: () => eyePoint[1] = eyePoint[1] - 0.1,
+          }
+
+          const handler = keyHandlerMap[code];
+
+          handler && handler();
+
+          draw();
+        }
+      }
+    }
+    __main__();
+  </script>
+</body>
+
+</html>

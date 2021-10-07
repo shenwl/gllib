@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colored Triangle</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+
+    input {
+      width: 80px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <canvas id="canvas" width="400" height="400">Not Support Canvas</canvas>
+  </div>
+  <script src="./utils.js"></script>
+  <script>
+    const vertexShader = `
+      attribute vec4 a_Position;
+      attribute vec4 a_Color;
+      varying vec4 v_Color;
+
+      void main() {
+        gl_Position = a_Position;
+        v_Color = a_Color;
+      }
+    `
+    const fragmentShader = `
+      precision mediump float;
+      varying vec4 v_Color;
+
+      void main() {
+        gl_FragColor = v_Color;
+      }
+    `
+
+    function __main__() {
+      const vertices = new Float32Array([
+        0, 0.5,
+        -0.5, -0.5,
+        0.5, -0.5,
+      ]);
+      const colors = new Float32Array([
+        0, 0, 1,
+        0, 1, 0,
+        1, 0, 0,
+      ]); 
+
+      const gl = document.getElementById('canvas').getContext('webgl');
+      Utils.initShader(gl, vertexShader, fragmentShader);
+      gl.clearColor(0, 0, 0, 1);
+
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+
+      function draw() {
+        const n = 3;
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        const vertexBuffer = Utils.createBuffer(gl, vertices);
+        gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(a_Position);
+
+        const colorBuffer = Utils.createBuffer(gl, colors);
+        gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(a_Color);
+
+        gl.drawArrays(gl.TRIANGLES, 0, n);
+      }
+
+      draw();
+      initEvent();
+
+      function initEvent() {
+        window.onkeydown = e => {
+          console.log(e)
+          const code = e.code;
+          const isAlt = e.altKey;
+          const keyHandlerMap = {
+            ArrowLeft: () => TRANSITION[0] = TRANSITION[0] - 0.05,
+            ArrowRight: () => TRANSITION[0] = TRANSITION[0] + 0.05,
+            ArrowUp: () => TRANSITION[1] = TRANSITION[1] + 0.05,
+            ArrowDown: () => TRANSITION[1] = TRANSITION[1] - 0.05,
+            KeyX: () => SCALE[0] = SCALE[0] + 0.1,
+            keyY: () => SCALE[1] = SCALE[1] + 0.1,
+            keyZ: () => SCALE[2] = SCALE[2] + 0.1,
+          }
+          const altComposeKeyHandlerMap = {
+            ArrowLeft: () => ANGLE = ANGLE - 1,
+            ArrowRight: () => ANGLE = ANGLE + 1,
+            KeyX: () => SCALE[0] = SCALE[0] - 0.1,
+            keyY: () => SCALE[1] = SCALE[1] - 0.1,
+            keyZ: () => SCALE[2] = SCALE[2] - 0.1,
+          }
+          const handler = isAlt ? altComposeKeyHandlerMap[code] : keyHandlerMap[code];
+
+          handler && handler();
+
+          draw();
+        }
+      }
+    }
+    __main__();
+  </script>
+</body>
+
+</html>

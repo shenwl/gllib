@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click Point</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+
+    input {
+      width: 80px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <canvas id="canvas" width="400" height="400">Not Support Canvas</canvas>
+    <div>
+      size: <input step="1" min="1" type="number" name="size" id="size-input" value="10" />
+      <button id="undo">undo</button>
+    </div>
+  </div>
+
+  <script src="./utils.js"></script>
+  <script>
+    const vertexShader = `
+      attribute vec4 a_Position;
+      attribute float a_FontSize;
+
+      void main() {
+        gl_Position = a_Position;
+        gl_PointSize = a_FontSize;
+      }
+    `
+    const fragmentShader = `
+      precision mediump float;
+      uniform vec4 u_FragColor;
+      void main() {
+        gl_FragColor = u_FragColor;
+      }
+    `
+
+    function __main__() {
+      const pointConfig = Utils.reactive({
+        points: [],
+        size: 10,
+      });
+
+      const $canvas = document.getElementById('canvas');
+
+      const gl = $canvas.getContext('webgl');
+
+      Utils.initShader(gl, vertexShader, fragmentShader);
+
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      const a_FontSize = gl.getAttribLocation(gl.program, 'a_FontSize');
+      const u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
+
+      if (a_Position < 0 || a_FontSize < 0 || u_FragColor < 0) throw Error(`[getAttribLocation fail] ${a_Position}, ${a_FontSize}, ${u_FragColor}`);
+
+      gl.clearColor(0, 0, 0, 1);
+
+      function draw() {
+        gl.vertexAttrib1f(a_FontSize, pointConfig.size);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        for (let point of pointConfig.points) {
+          gl.vertexAttrib3f(a_Position, ...point.position);
+          gl.uniform4f(u_FragColor, ...point.color, 1);
+          gl.drawArrays(gl.POINTS, 0, 1);
+        }
+      }
+
+      Utils.effect(draw);
+
+      initEvent(pointConfig);
+    }
+    __main__();
+
+    function initEvent(pointConfig) {
+      const $canvas = document.getElementById('canvas');
+      const $size = document.getElementById('size-input');
+      const $undo = document.getElementById('undo');
+      $canvas.onmousedown = e => {
+        const rect = e.target.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        pointConfig.points = [...pointConfig.points, {
+          position: Utils.convertCanvasCoordinateToGl(x, y, 1, $canvas),
+          color: [Math.random().toFixed(2), Math.random().toFixed(2), Math.random().toFixed(2)],
+        }]
+      }
+      $size.onchange = e => pointConfig.size = e.target.value;
+      $undo.onclick = () => {
+        pointConfig.points = pointConfig.points.slice(0, -1)
+      };
+    }
+  </script>
+</body>
+
+</html>

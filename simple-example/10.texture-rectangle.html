@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>texture（ff浏览器演示）</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+
+    input {
+      width: 80px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <canvas id="canvas" width="400" height="400">Not Support Canvas</canvas>
+  </div>
+  <script src="./utils.js"></script>
+  <script>
+    const vertexShader = `
+      attribute vec4 a_Position;
+      attribute vec2 a_TexCoord;
+      varying vec2 v_TexCoord;
+
+      void main() {
+        gl_Position = a_Position;
+        v_TexCoord = a_TexCoord;
+      }
+    `
+    const fragmentShader = `
+      precision mediump float;
+      uniform sampler2D u_Sampler0;
+      uniform sampler2D u_Sampler1;
+      varying vec2 v_TexCoord;
+
+      void main() {
+        vec4 color0 = texture2D(u_Sampler0, v_TexCoord);
+        vec4 color1 = texture2D(u_Sampler1, v_TexCoord);
+        gl_FragColor = color0 * color1; // 材质叠加
+      }
+    `
+
+    async function __main__() {
+      const verticesAndTexCoords = new Float32Array([
+        // 顶点坐标， 对应的纹理坐标
+        -0.5, 0.5, 0, 1,
+        -0.5, -0.5, 0, 0,
+        0.5, 0.5, 1, 1,
+        0.5, -0.5, 1, 0
+      ]);
+
+      const FSIZE = verticesAndTexCoords.BYTES_PER_ELEMENT;
+
+      const gl = document.getElementById('canvas').getContext('webgl');
+      Utils.initShader(gl, vertexShader, fragmentShader);
+      gl.clearColor(0, 0, 0, 1);
+
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      const a_TexCoord = gl.getAttribLocation(gl.program, 'a_TexCoord');
+      const u_Sampler0 = gl.getUniformLocation(gl.program, 'u_Sampler0');
+      const u_Sampler1 = gl.getUniformLocation(gl.program, 'u_Sampler1');
+
+      const texture0 = gl.createTexture();
+      const texture1 = gl.createTexture();
+
+      const loadTexture = Utils.createTextureLoader(2, () => {
+        draw();
+      });
+
+      const image0 = new Image();
+      const image1 = new Image();
+
+      image0.onload = () => {
+        loadTexture(gl, texture0, u_Sampler0, image0, 0);
+      }
+      image1.onload = () => {
+        loadTexture(gl, texture1, u_Sampler1, image1, 1);
+      }
+      image0.src = './texture1.jpg';
+      image1.src = './texture2.jpg';
+
+      function draw() {
+        const n = 4;
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        const vertexTexCoordBuffer = Utils.createBuffer(gl, verticesAndTexCoords);
+        gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 4, 0);
+        gl.enableVertexAttribArray(a_Position);
+
+        gl.vertexAttribPointer(a_TexCoord, 2, gl.FLOAT, false, FSIZE * 4, FSIZE * 2);
+        gl.enableVertexAttribArray(a_TexCoord);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+      }
+    }
+    __main__();
+  </script>
+</body>
+
+</html>

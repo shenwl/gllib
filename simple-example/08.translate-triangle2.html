@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triangle Tranlate</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+
+    input {
+      width: 80px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <canvas id="canvas" width="400" height="400">Not Support Canvas</canvas>
+  </div>
+  <script src="./matrix.js"></script>
+  <script src="./utils.js"></script>
+  <script>
+    const vertexShader = `
+      attribute vec4 a_Position;
+      uniform mat4 u_ModelMatrix; 
+
+      void main() {
+        gl_Position = u_ModelMatrix * a_Position;
+      }
+    `
+    const fragmentShader = `
+      void main() {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+      }
+    `
+
+    function __main__() {
+      const vertices = new Float32Array([
+        0, 0.5,
+        -0.5, -0.5,
+        0.5, -0.5,
+      ]);
+
+      // translate
+      let TRANSITION = [0, 0, 0];
+      let ANGLE = 0;
+      let SCALE = [0.5, 0.5, 0.5];
+
+      const gl = document.getElementById('canvas').getContext('webgl');
+      Utils.initShader(gl, vertexShader, fragmentShader);
+      gl.clearColor(0, 0, 0, 1);
+
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      const u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
+
+      const buffer = Utils.createBuffer(gl, vertices);
+      gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0)
+      gl.enableVertexAttribArray(a_Position);
+
+      function draw() {
+        const n = 3;
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        const modelMatrix = new Matrix4()
+          .setRotate(ANGLE, 0, 0, 1)
+          .translate(...TRANSITION)
+          .scale(...SCALE);
+
+        gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+
+        gl.drawArrays(gl.TRIANGLES, 0, n);
+      }
+
+      draw();
+      initEvent();
+
+      const animate = () => {
+        ANGLE -= 1;
+        draw();
+        requestAnimationFrame(animate)
+      }
+
+      animate();
+
+      function initEvent() {
+        window.onkeydown = e => {
+          const code = e.code;
+          const isAlt = e.altKey;
+          const keyHandlerMap = {
+            ArrowLeft: () => TRANSITION[0] = TRANSITION[0] - 0.05,
+            ArrowRight: () => TRANSITION[0] = TRANSITION[0] + 0.05,
+            ArrowUp: () => TRANSITION[1] = TRANSITION[1] + 0.05,
+            ArrowDown: () => TRANSITION[1] = TRANSITION[1] - 0.05,
+            KeyX: () => SCALE[0] = SCALE[0] + 0.1,
+            keyY: () => SCALE[1] = SCALE[1] + 0.1,
+            keyZ: () => SCALE[2] = SCALE[2] + 0.1,
+          }
+          const altComposeKeyHandlerMap = {
+            ArrowLeft: () => ANGLE = ANGLE - 1,
+            ArrowRight: () => ANGLE = ANGLE + 1,
+            KeyX: () => SCALE[0] = SCALE[0] - 0.1,
+            keyY: () => SCALE[1] = SCALE[1] - 0.1,
+            keyZ: () => SCALE[2] = SCALE[2] - 0.1,
+          }
+          const handler = isAlt ? altComposeKeyHandlerMap[code] : keyHandlerMap[code];
+
+          handler && handler();
+
+          draw();
+        }
+      }
+    }
+
+    __main__();
+  </script>
+</body>
+
+</html>
