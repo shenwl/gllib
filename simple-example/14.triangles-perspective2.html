@@ -71,17 +71,17 @@
         1.25, -1, -4,
         
         // 默认情况，WebGL先绘制顺序在前面的顶点，而不是自动处理前后关系，需要gl.enable(gl.DEPTH_TEST)开启深度缓冲期 + gl.clear(gl.DEPTH_BUFFER_BIT)绘制前清理深度缓冲区
-        // 0.75, 1, 0,
-        // 0.25, -1, 0,
-        // 1.25, -1, 0,
+        0.75, 1, 0,
+        0.25, -1, 0,
+        1.25, -1, 0,
 
         0.75, 1, -2,
         0.25, -1, -2,
         1.25, -1, -2,
 
-        0.75, 1, 0,
-        0.25, -1, 0,
-        1.25, -1, 0,
+        // 0.75, 1, 0,
+        // 0.25, -1, 0,
+        // 1.25, -1, 0,
       ]);
       const colors = new Float32Array([
         // 绿色
@@ -99,6 +99,8 @@
         0.4, 0.4, 1,
         1, 0.4, 0.4,
       ]);
+
+      gl.enable(gl.DEPTH_TEST);
 
       function draw() {
         const n = 9;
@@ -118,6 +120,7 @@
         gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
 
         gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.clear(gl.DEPTH_BUFFER_BIT);
 
         const vertexBuffer = Utils.createBuffer(gl, vertices);
         gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0)
