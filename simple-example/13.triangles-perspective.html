@@ -153,19 +153,23 @@
       initEvent();
       function initEvent() {
         window.onkeydown = e => {
-          console.log(e)
           const code = e.code;
+          console.log(code)
           const keyHandlerMap = {
             ArrowRight: () => eyePoint[0] = eyePoint[0] + 0.1,
             ArrowLeft: () => eyePoint[0] = eyePoint[0] - 0.1,
             ArrowUp: () => eyePoint[1] = eyePoint[1] + 0.1,
             ArrowDown: () => eyePoint[1] = eyePoint[1] - 0.1,
+            KeyZ: () => eyePoint[2] = eyePoint[2] - 0.1,
+            KeyX: () => eyePoint[2] = eyePoint[2] + 0.1,
           }
-
+    
           const handler = keyHandlerMap[code];
-
-          handler && handler();
-
+          if(handler) {
+            handler();
+            console.log(`eyePoint change: x: ${eyePoint[0]}, y: ${eyePoint[1]}, z: ${eyePoint[2]}`)
+          }
+          
           draw();
         }
       }
