@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cube</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <canvas id="canvas" width="400" height="400">Not Support Canvas</canvas>
+  </div>
+
+  <script src="./matrix.js"></script>
+  <script src="./utils.js"></script>
+  <script>
+    const vertexShader = `
+      attribute vec4 a_Position;
+      attribute vec4 a_Color;
+      uniform mat4 u_MvpMatrix;
+      varying vec4 v_Color;
+
+      void main() {
+        gl_Position = u_MvpMatrix * a_Position;
+        v_Color = a_Color;
+      }
+    `
+    const fragmentShader = `
+      precision mediump float;
+      varying vec4 v_Color;
+      void main() {
+        gl_FragColor = v_Color;
+      }
+    `
+    function __main__() {
+      const $canvas = document.getElementById('canvas');
+      const gl = $canvas.getContext('webgl');
+      Utils.initShader(gl, vertexShader, fragmentShader);
+
+      const eyePoint = [3, 3, 7]; // 视点坐标
+      let atPoint = [0, 0, 0]; // 观察点坐标
+      let upDirection = [0, 1, 0]; // 上方向
+      // 透视空间配置
+      const perspectiveConfig = {
+        near: 1,
+        far: 100,
+        // aspect: $canvas.width / $canvas.height,
+        aspect: 1,
+        fovy: 30,
+      }
+
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+      const u_MvpMatrix = gl.getUniformLocation(gl.program, 'u_MvpMatrix');
+
+      const verticesColors = new Float32Array([
+        // 坐标 + 颜色
+        1, 1, 1, 1, 1, 1, // v0 白
+        -1, 1, 1, 1, 0, 1, // v1 品红
+        -1, -1, 1, 1, 0, 0, // v2 红
+        1, -1, 1, 0, 1, 1, // v3
+        1, -1, -1, 0, 0, 1, // v4
+        1, 1, -1, 1, 1, 0, // v5
+        -1, 1, -1, 1, 1, 1, // v6
+        -1, -1, -1, 1, 1, 0, // v7
+      ]);
+      const indices = new Uint8Array([
+        0, 1, 2, 0, 2, 3, // 前
+        0, 3, 4, 0, 4, 5, // 右
+        0, 5, 6, 0, 6, 1, // 上
+        1, 6, 7, 1, 7, 2, // 左
+        7, 4, 3, 7, 3, 2, // 下
+        4, 7, 6, 4, 6, 5, // 后
+      ]);
+
+      const n = indices.length;
+
+      gl.enable(gl.DEPTH_TEST);
+
+      function draw() {
+        const mvpMatrix = new Matrix4()
+
+        mvpMatrix.setPerspective(
+          perspectiveConfig.fovy, perspectiveConfig.aspect,
+          perspectiveConfig.near, perspectiveConfig.far,
+        );
+        mvpMatrix.lookAt(...eyePoint, ...atPoint, ...upDirection);
+
+        gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
+
+        const vertexColorBuffer = Utils.createBuffer(gl, verticesColors);
+        const indexBuffer = Utils.createBuffer(gl);
+
+        const FSIZE = verticesColors.BYTES_PER_ELEMENT;
+        gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, FSIZE * 6, 0)
+        gl.enableVertexAttribArray(a_Position);
+        gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 6, FSIZE * 3)
+        gl.enableVertexAttribArray(a_Color);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW)
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.clear(gl.DEPTH_BUFFER_BIT);
+
+        gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
+      }
+
+      draw();
+    }
+    __main__();
+  </script>
+</body>
+
+</html>
