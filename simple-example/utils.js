@@ -120,15 +120,16 @@ function convertCanvasCoordinateToGl(x, y, z, canvas) {
   ];
 }
 
-function createBuffer(gl, data, target) {
+function createBuffer(gl, data, target, mode) {
   const buffer = gl.createBuffer();
 
   if (!buffer) {
     throw Error("[createBuffer] Fail to create the buffer object");
   }
+  if (!data) return buffer;
 
   gl.bindBuffer(target || gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(target || gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  gl.bufferData(target || gl.ARRAY_BUFFER, data, mode || gl.STATIC_DRAW);
 
   return buffer;
 }
